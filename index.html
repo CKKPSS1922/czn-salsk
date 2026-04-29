@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>ЦЗН г. Сальск - Поиск работы</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1400px; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        #map { height: 550px; width: 100%; border-radius: 15px; margin-top: 10px; }
+        .vacancy-card { background: #f8f9fa; border-radius: 10px; padding: 12px; margin-bottom: 12px; cursor: pointer; border-left: 4px solid #0d6efd; }
+        .vacancy-card:hover { background: #e9ecef; transform: translateX(3px); }
+        .filter-box { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        .vacancy-list { max-height: 500px; overflow-y: auto; }
+        .detail-card { position: absolute; bottom: 20px; right: 20px; width: 320px; background: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; display: none; }
+        .btn-route, .btn-share { background-color: #0d6efd; color: white; border: none; border-radius: 20px; padding: 5px 12px; margin-right: 5px; margin-top: 8px; }
+        .admin-panel { background: #e9ecef; border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        .toast-notify { position: fixed; bottom: 20px; left: 20px; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; z-index: 2000; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+        .user-info { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .login-btn { background-color: #0d6efd; color: white; border: none; border-radius: 20px; padding: 5px 15px; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; border-radius: 20px; padding: 5px 15px; }
+        .instruction { background: #e9ecef; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="user-info">
+        <div id="userStatus"></div>
+        <button id="showLoginBtn" class="login-btn">Вход для сотрудника</button>
+        <button id="logoutBtn" class="logout-btn" style="display: none;">Выйти</button>
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchPanel" type="button">Поиск работы</button>
+        </li>
+        <li class="nav-item" id="adminTabItem" style="display: none;">
+            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#adminPanel" type="button">Администрирование</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <!-- Поиск -->
+        <div class="tab-pane fade show active" id="searchPanel">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="filter-box">
+                        <h5>Параметры поиска</h5>
+                        <div class="mb-2">
+                            <label>Ключевые слова</label>
+                            <input type="text" id="searchKeyword" class="form-control" placeholder="Должность, компания">
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label>Зарплата от (руб)</label>
+                                <input type="number" id="salaryFrom" class="form-control" placeholder="20000">
+                            </div>
+                            <div class="col">
+                                <label>Зарплата до (руб)</label>
+                                <input type="number" id="salaryTo" class="form-control" placeholder="60000">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label>Тип занятости</label>
+                            <select id="jobType" class="form-select">
+                                <option value="">Любая</option>
+                                <option value="full">Полная занятость</option>
+                                <option value="part">Частичная занятость</option>
+                                <option value="remote">Удалённая работа</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label>Район</label>
+                            <select id="districtSelect" class="form-select">
+                                <option value="">Любой район</option>
+                                <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
+                                <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary w-50" onclick="searchVacancies()">Найти</button>
+                            <button class="btn btn-secondary w-50" onclick="resetFilters()">Сбросить</button>
+                        </div>
+                        <hr>
+                        <div id="routeInfo" class="small text-muted"></div>
+                        <div class="instruction">
+                            <strong>Построение маршрута:</strong> кликните на карте, чтобы указать откуда выезжать (появится зелёная метка), затем кликните по вакансии и нажмите "Маршрут".
+                        </div>
+                    </div>
+                    <div class="vacancy-list" id="vacancyList"></div>
+                </div>
+                <div class="col-md-8">
+                    <div id="map"></div>
+                    <div id="vacancyDetail" class="detail-card"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Администрирование -->
+        <div class="tab-pane fade" id="adminPanel">
+            <div class="admin-panel">
+                <h5>Добавить новую вакансию</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-label">Название должности</div>
+                        <input type="text" id="newTitle" class="form-control" placeholder="Программист">
+                        <div class="form-label">Компания</div>
+                        <input type="text" id="newCompany" class="form-control" placeholder="ООО Ромашка">
+                        <div class="form-label">Зарплата от (руб)</div>
+                        <input type="number" id="newSalaryMin" class="form-control" placeholder="30000">
+                        <div class="form-label">Зарплата до (руб)</div>
+                        <input type="number" id="newSalaryMax" class="form-control" placeholder="50000">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label">Район</div>
+                        <select id="newDistrict" class="form-select">
+                            <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
+                            <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
+                        </select>
+                        <div class="form-label">Тип занятости</div>
+                        <select id="newType" class="form-select">
+                            <option value="full">Полная занятость</option>
+                            <option value="part">Частичная занятость</option>
+                            <option value="remote">Удалённая работа</option>
+                        </select>
+                        <div class="form-label">Описание</div>
+                        <textarea id="newDescription" class="form-control" rows="3" placeholder="Обязанности, условия..."></textarea>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-success" id="addVacancyBtn">Добавить вакансию</button>
+                    <button class="btn btn-secondary" onclick="loadVacanciesFromDB()">Обновить список</button>
+                </div>
+                <hr>
+                <h5>Список вакансий (удаление)</h5>
+                <div id="vacancyAdminList" class="vacancy-list" style="max-height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для входа -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Вход для сотрудников ЦЗН</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalLoginError" class="alert alert-danger" style="display: none;"></div>
+                <input type="email" id="modalEmail" class="form-control mb-2" placeholder="Email">
+                <input type="password" id="modalPassword" class="form-control mb-2" placeholder="Пароль">
+                <button class="btn btn-primary w-100" id="modalSignInBtn">Войти</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toastMessage" class="toast-notify"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=de8e18b4-4b0c-4002-bc02-b6576256206f&lang=ru_RU"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyB15puFqVAopEu4bRKOx6qomODnypa7fnc",
+        authDomain: "czn-salsk.firebaseapp.com",
+        databaseURL: "https://czn-salsk-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "czn-salsk",
+        storageBucket: "czn-salsk.firebasestorage.app",
+        messagingSenderId: "399380131761",
+        appId: "1:399380131761:web:812774f2918ce72f73d790"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    let map = null;
+    let userMarker = null;
+    let currentRoute = null;
+    let vacancies = [];
+
+    function showNotification(msg) {
+        const toast = document.getElementById('toastMessage');
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => toast.style.opacity = '0', 2000);
+    }
+
+    function setStartPoint(coords) {
+        if (userMarker) {
+            map.geoObjects.remove(userMarker);
+        }
+        userMarker = new ymaps.Placemark([coords.lat, coords.lng], {
+            balloonContent: 'Отсюда'
+        }, { preset: 'islands#greenDotIcon' });
+        map.geoObjects.add(userMarker);
+        showNotification('Точка отправления установлена. Теперь выберите вакансию и нажмите Маршрут');
+    }
+
+    function buildRouteToVacancy(lat, lng) {
+        if (!userMarker) {
+            showNotification('Сначала кликните на карте, чтобы указать откуда ехать');
+            return;
+        }
+        const startCoords = userMarker.geometry.getCoordinates();
+        if (currentRoute) {
+            map.geoObjects.remove(currentRoute);
+        }
+        ymaps.route([startCoords, [lat, lng]]).then(
+            route => {
+                currentRoute = route;
+                map.geoObjects.add(route);
+                const length = route.getHumanLength();
+                document.getElementById('routeInfo').innerHTML = 'Маршрут: ' + length;
+            },
+            () => showNotification('Маршрут не построен')
+        );
+    }
+
+    function loadVacanciesFromDB() {
+        database.ref('vacancies').on('value', snapshot => {
+            const data = snapshot.val();
+            vacancies = data ? Object.entries(data).map(([id, v]) => ({ firebaseId: id, ...v })) : [];
+            updateUI();
+            if (document.getElementById('adminPanel')?.classList.contains('active')) updateAdminList();
+        });
+    }
+
+    function addVacancy() {
+        if (!auth.currentUser) {
+            showNotification('Требуется авторизация');
+            return;
+        }
+        const title = document.getElementById('newTitle').value.trim();
+        const company = document.getElementById('newCompany').value.trim();
+        if (!title || !company) {
+            showNotification('Заполните название и компанию');
+            return;
+        }
+        const district = document.getElementById('newDistrict').value;
+        const newVac = {
+            title, company,
+            salary_min: parseInt(document.getElementById('newSalaryMin').value) || 0,
+            salary_max: parseInt(document.getElementById('newSalaryMax').value) || 0,
+            salary_text: `${document.getElementById('newSalaryMin').value || 0} - ${document.getElementById('newSalaryMax').value || 0} руб.`,
+            district: district,
+            type: document.getElementById('newType').value,
+            description: document.getElementById('newDescription').value,
+            lat: getLatByDistrict(district),
+            lng: getLngByDistrict(district),
+            createdBy: auth.currentUser.email,
+            createdAt: new Date().toISOString()
+        };
+        database.ref('vacancies').push(newVac).then(() => {
+            showNotification('Вакансия добавлена');
+            ['newTitle','newCompany','newSalaryMin','newSalaryMax','newDescription'].forEach(id => document.getElementById(id).value = '');
+        }).catch(err => showNotification('Ошибка: ' + err.message));
+    }
+
+    function deleteVacancy(firebaseId) {
+        if (!auth.currentUser) {
+            showNotification('Требуется авторизация');
+            return;
+        }
+        if (confirm('Удалить вакансию?')) {
+            database.ref('vacancies/' + firebaseId).remove().then(() => showNotification('Удалено'));
+        }
+    }
+
+    function getLatByDistrict(d) {
+        const coords = { 'Заречный':46.462, 'Низовский':46.455, 'Кучур-да':46.485, 'Центральный':46.4775, 'Капустино':46.550, 'Промышленный':46.545, 'Новосальск':46.524 };
+        return coords[d] || 46.475;
+    }
+    function getLngByDistrict(d) {
+        const coords = { 'Заречный':41.517, 'Низовский':41.507, 'Кучур-да':41.496, 'Центральный':41.543, 'Капустино':41.550, 'Промышленный':41.545, 'Новосальск':41.524 };
+        return coords[d] || 41.541;
+    }
+
+    function updateAdminList() {
+        const container = document.getElementById('vacancyAdminList');
+        if (!container) return;
+        if (!vacancies.length) { container.innerHTML = '<div class="text-muted">Нет вакансий</div>'; return; }
+        let html = '';
+        vacancies.forEach(v => {
+            html += `<div class="vacancy-card" style="border-left-color:#dc3545;">
+                        <strong>${v.title}</strong><br>${v.company}<br>${v.salary_text}<br>
+                        <button class="btn btn-danger btn-sm mt-2" onclick="deleteVacancy('${v.firebaseId}')">Удалить</button>
+                     </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function filterVacancies() {
+        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+        const from = parseInt(document.getElementById('salaryFrom').value) || 0;
+        const to = parseInt(document.getElementById('salaryTo').value) || Infinity;
+        const type = document.getElementById('jobType').value;
+        const distr = document.getElementById('districtSelect').value;
+        return vacancies.filter(v => {
+            if (keyword && !v.title.toLowerCase().includes(keyword) && !v.company.toLowerCase().includes(keyword)) return false;
+            if (!(v.salary_max >= from && v.salary_min <= to)) return false;
+            if (type && v.type !== type) return false;
+            if (distr && v.district !== distr) return false;
+            return true;
+        });
+    }
+
+    function updateUI() {
+        const filtered = filterVacancies();
+        const listDiv = document.getElementById('vacancyList');
+        if (!filtered.length) listDiv.innerHTML = '<div class="alert alert-warning">Ничего не найдено</div>';
+        else {
+            let html = `<h5>Найдено: ${filtered.length}</h5>`;
+            filtered.forEach(v => {
+                html += `<div class="vacancy-card" onclick='showDetails(${JSON.stringify(v)})'>
+                            <strong>${v.title}</strong><br>${v.company}<br>${v.salary_text}<br>${v.district}
+                         </div>`;
+            });
+            listDiv.innerHTML = html;
+        }
+
+        if (map) {
+            const oldMarker = userMarker;
+            map.geoObjects.removeAll();
+            if (oldMarker) {
+                userMarker = oldMarker;
+                map.geoObjects.add(userMarker);
+            }
+            filtered.forEach(v => {
+                const pm = new ymaps.Placemark([v.lat, v.lng], {
+                    balloonContentHeader: v.title,
+                    balloonContentBody: `${v.company}<br>${v.salary_text}<br>${v.district}`,
+                    balloonContentFooter: `<button onclick="buildRouteToVacancy(${v.lat},${v.lng})">Маршрут</button>`
+                }, { preset: 'islands#blueCircleIcon' });
+                pm.events.add('click', () => showDetails(v));
+                map.geoObjects.add(pm);
+            });
+        }
+    }
+
+    function showDetails(v) {
+        const div = document.getElementById('vacancyDetail');
+        div.style.display = 'block';
+        div.innerHTML = `
+            <h6>${v.title}</h6>
+            <p><strong>${v.company}</strong><br>${v.salary_text}<br>${v.district}<br>${v.type==='full'?'Полная':v.type==='part'?'Частичная':'Удалёнка'}</p>
+            <p>${v.description || ''}</p>
+            <button class="btn-route" onclick="buildRouteToVacancy(${v.lat},${v.lng})">Маршрут</button>
+            <button class="btn-share" onclick="shareVacancy(${JSON.stringify(v).replace(/"/g,'&quot;')})">Поделиться</button>
+            <button class="btn-route btn-secondary" onclick="document.getElementById('vacancyDetail').style.display='none'">Закрыть</button>
+        `;
+    }
+
+    function shareVacancy(v) {
+        const text = `${v.title} в ${v.company}\nЗарплата: ${v.salary_text}\nРайон: ${v.district}\n${v.description}`;
+        navigator.clipboard.writeText(text).then(() => showNotification('Скопировано'));
+    }
+
+    function searchVacancies() { updateUI(); }
+    function resetFilters() {
+        document.getElementById('searchKeyword').value = '';
+        document.getElementById('salaryFrom').value = '';
+        document.getElementById('salaryTo').value = '';
+        document.getElementById('jobType').value = '';
+        document.getElementById('districtSelect').value = '';
+        updateUI();
+        document.getElementById('routeInfo').innerHTML = '';
+        if (currentRoute) { map.geoObjects.remove(currentRoute); currentRoute = null; }
+    }
+
+    function initMap() {
+        ymaps.ready(() => {
+            map = new ymaps.Map("map", { center: [46.475,41.541], zoom: 13, controls: ['zoomControl'] });
+            map.events.add('click', (e) => {
+                const coords = e.get('coords');
+                setStartPoint({ lat: coords[0], lng: coords[1] });
+            });
+            updateUI();
+        });
+    }
+
+    // Авторизация
+    let loginModal;
+    window.addEventListener('load', () => {
+        loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        initMap();
+        loadVacanciesFromDB();
+        updateAuthUI(null);
+    });
+
+    function updateAuthUI(user) {
+        const showLoginBtn = document.getElementById('showLoginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userStatus = document.getElementById('userStatus');
+        const adminTab = document.getElementById('adminTabItem');
+        if (user) {
+            showLoginBtn.style.display = 'none';
+            logoutBtn.style.display = 'inline-block';
+            userStatus.innerHTML = `Сотрудник: <strong>${user.email}</strong>`;
+            adminTab.style.display = 'block';
+            if (document.getElementById('adminPanel').classList.contains('active')) updateAdminList();
+        } else {
+            showLoginBtn.style.display = 'inline-block';
+            logoutBtn.style.display = 'none';
+            userStatus.innerHTML = '';
+            adminTab.style.display = 'none';
+            const searchTabBtn = document.getElementById('search-tab');
+            if (document.getElementById('adminPanel').classList.contains('active')) {
+                searchTabBtn.click();
+            }
+        }
+    }
+
+    document.getElementById('showLoginBtn').addEventListener('click', () => {
+        document.getElementById('modalLoginError').style.display = 'none';
+        loginModal.show();
+    });
+
+    document.getElementById('modalSignInBtn').addEventListener('click', () => {
+        const email = document.getElementById('modalEmail').value;
+        const password = document.getElementById('modalPassword').value;
+        const errDiv = document.getElementById('modalLoginError');
+        auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                loginModal.hide();
+                updateAuthUI(userCredential.user);
+                showNotification('Вход выполнен');
+            })
+            .catch((error) => {
+                errDiv.style.display = 'block';
+                errDiv.innerText = error.message;
+            });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        auth.signOut().then(() => {
+            updateAuthUI(null);
+            showNotification('Вы вышли');
+        });
+    });
+
+    auth.onAuthStateChanged(user => {
+        updateAuthUI(user);
+    });
+
+    document.getElementById('addVacancyBtn').addEventListener('click', addVacancy);
+
+    document.getElementById('admin-tab')?.addEventListener('shown.bs.tab', () => updateAdminList());
+    document.getElementById('search-tab')?.addEventListener('shown.bs.tab', () => map?.invalidateSize());
+
+    // При выборе района в фильтре – перелетаем к его центру
+    document.getElementById('districtSelect').addEventListener('change', (e) => {
+        const district = e.target.value;
+        if (district && map) {
+            const lat = getLatByDistrict(district);
+            const lng = getLngByDistrict(district);
+            map.setCenter([lat, lng], 14);
+            showNotification(`Карта перемещена к району ${district}`);
+        }
+        updateUI(); // применяем фильтр
+    });
+
+    const debounce = (fn,delay=300) => { let t; return () => { clearTimeout(t); t = setTimeout(fn,delay); }; };
+    document.getElementById('searchKeyword').addEventListener('input', debounce(updateUI));
+    document.getElementById('salaryFrom').addEventListener('input', debounce(updateUI));
+    document.getElementById('salaryTo').addEventListener('input', debounce(updateUI));
+    document.getElementById('jobType').addEventListener('change', updateUI);
+</script>
+</body>
+</html>
