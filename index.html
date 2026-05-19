@@ -26,6 +26,8 @@
         .loc-btn { background-color: #28a745; color: white; border: none; border-radius: 20px; padding: 5px 15px; margin-left: 10px; }
         .instruction { background: #e9ecef; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; text-align: center; }
         .form-label { font-weight: bold; margin-top: 10px; font-size: 0.85rem; }
+        .coord-hint { font-size: 0.75rem; color: #6c757d; margin-top: 3px; }
+        .geocode-result { font-size: 0.8rem; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -47,7 +49,6 @@
     </ul>
 
     <div class="tab-content mt-3">
-        <!-- Поиск -->
         <div class="tab-pane fade show active" id="searchPanel">
             <div class="row">
                 <div class="col-md-4">
@@ -85,14 +86,13 @@
                             </select>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-primary w-50" onclick="searchVacancies()">Найти</button>
                             <button class="btn btn-secondary w-50" onclick="resetFilters()">Сбросить</button>
                             <button id="locateMeBtn" class="btn btn-success w-50">Моё местоположение</button>
                         </div>
                         <hr>
                         <div id="routeInfo" class="small text-muted"></div>
                         <div class="instruction">
-                            Построение маршрута: нажмите «Моё местоположение» или кликните на карте, чтобы указать откуда ехать (зелёная метка), затем кликните по вакансии и нажмите «Маршрут».
+                            Построение маршрута: нажмите «Моё местоположение» или кликните на карте (зелёная метка), затем кликните по вакансии и нажмите «Маршрут».
                         </div>
                     </div>
                     <div class="vacancy-list" id="vacancyList"></div>
@@ -104,7 +104,6 @@
             </div>
         </div>
 
-        <!-- Администрирование (расширенная форма) -->
         <div class="tab-pane fade" id="adminPanel">
             <div class="admin-panel">
                 <h5>Добавить новую вакансию</h5>
@@ -116,8 +115,6 @@
                         <input type="text" id="newCompany" class="form-control" placeholder="ООО Ромашка">
                         <div class="form-label">Контактный телефон</div>
                         <input type="text" id="newPhone" class="form-control" placeholder="+7 (863) 123-45-67">
-                        <div class="form-label">Адрес (улица, дом)</div>
-                        <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10">
                         <div class="form-label">Район *</div>
                         <select id="newDistrict" class="form-select">
                             <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
@@ -141,6 +138,19 @@
                         <input type="text" id="newRequirements" class="form-control" placeholder="Опыт от 1 года, образование">
                     </div>
                 </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-label">Адрес места работы *</div>
+                        <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
+                        <div class="coord-hint">Введите адрес. Координаты определятся автоматически.</div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div id="geocodeResult" class="geocode-result"></div>
+                    </div>
+                </div>
+                <div id="adminMap" style="height: 250px; width: 100%; margin-top: 10px; display: none;"></div>
                 <div class="mt-2">
                     <div class="form-label">Описание вакансии</div>
                     <textarea id="newDescription" class="form-control" rows="3" placeholder="Обязанности, условия работы..."></textarea>
@@ -201,6 +211,12 @@
     let userMarker = null;
     let currentRoute = null;
     let vacancies = [];
+    
+    let tempMap = null;
+    let tempMarker = null;
+    let foundLat = null;
+    let foundLng = null;
+    let geocodeTimeout = null;
 
     function showNotification(msg) {
         const toast = document.getElementById('toastMessage');
@@ -215,7 +231,7 @@
             balloonContent: source === 'geolocation' ? 'Ваше местоположение' : 'Отсюда'
         }, { preset: 'islands#greenDotIcon' });
         map.geoObjects.add(userMarker);
-        showNotification(`Точка отправления установлена. Теперь выберите вакансию и нажмите Маршрут.`);
+        showNotification('Точка отправления установлена.');
     }
 
     function locateUser() {
@@ -232,30 +248,93 @@
             },
             (error) => {
                 let msg = 'Не удалось определить местоположение. ';
-                if (error.code === 1) msg += 'Разрешите доступ к геолокации в браузере.';
-                else if (error.code === 2) msg += 'Позиция недоступна.';
+                if (error.code === 1) msg += 'Разрешите доступ.';
                 else msg += 'Попробуйте ещё раз.';
                 showNotification(msg);
             }
         );
     }
 
-    function buildRouteToVacancy(lat, lng) {
+    function buildRoute(lat, lng) {
         if (!userMarker) {
             showNotification('Сначала укажите точку отправления: нажмите "Моё местоположение" или кликните на карте.');
             return;
         }
         const startCoords = userMarker.geometry.getCoordinates();
+        
         if (currentRoute) map.geoObjects.remove(currentRoute);
+        
         ymaps.route([startCoords, [lat, lng]]).then(
-            route => {
+            function(route) {
                 currentRoute = route;
                 map.geoObjects.add(route);
-                const length = route.getHumanLength();
-                document.getElementById('routeInfo').innerHTML = 'Маршрут: ' + length;
+                const distance = route.getHumanLength();
+                const time = route.getHumanTime();
+                document.getElementById('routeInfo').innerHTML = 'Маршрут: ' + distance + ', время: ' + time;
+                showNotification('Маршрут построен: ' + distance + ', ' + time);
             },
-            () => showNotification('Маршрут не построен (возможно, нет дорог)')
+            function(error) {
+                console.error('Ошибка маршрутизации:', error);
+                document.getElementById('routeInfo').innerHTML = 'Маршрут не построен. Проверьте, есть ли дороги между точками.';
+                showNotification('Маршрут не построен');
+            }
         );
+    }
+
+    function autoGeocode(address) {
+        if (geocodeTimeout) clearTimeout(geocodeTimeout);
+        if (!address || address.trim() === '') {
+            document.getElementById('geocodeResult').innerHTML = '';
+            if (tempMap) { tempMap.destroy(); tempMap = null; }
+            document.getElementById('adminMap').style.display = 'none';
+            foundLat = null;
+            foundLng = null;
+            return;
+        }
+        
+        geocodeTimeout = setTimeout(() => {
+            ymaps.geocode(address, { results: 1 })
+                .then(function(res) {
+                    const firstGeoObject = res.geoObjects.get(0);
+                    if (!firstGeoObject) {
+                        document.getElementById('geocodeResult').innerHTML = '<span class="text-danger">Адрес не найден</span>';
+                        foundLat = null;
+                        foundLng = null;
+                        if (tempMap) { tempMap.destroy(); tempMap = null; }
+                        document.getElementById('adminMap').style.display = 'none';
+                        return;
+                    }
+                    
+                    const coords = firstGeoObject.geometry.getCoordinates();
+                    const foundAddress = firstGeoObject.getAddressLine();
+                    foundLat = coords[0];
+                    foundLng = coords[1];
+                    
+                    document.getElementById('geocodeResult').innerHTML = '<span class="text-success">Найдено: ' + foundAddress + '</span>';
+                    
+                    const adminMapDiv = document.getElementById('adminMap');
+                    adminMapDiv.style.display = 'block';
+                    
+                    if (tempMap) { tempMap.destroy(); }
+                    
+                    ymaps.ready(function() {
+                        tempMap = new ymaps.Map('adminMap', {
+                            center: [foundLat, foundLng],
+                            zoom: 17,
+                            controls: ['zoomControl']
+                        });
+                        if (tempMarker) { tempMap.geoObjects.remove(tempMarker); }
+                        tempMarker = new ymaps.Placemark([foundLat, foundLng], {
+                            balloonContent: 'Адрес'
+                        }, { preset: 'islands#redCircleIcon' });
+                        tempMap.geoObjects.add(tempMarker);
+                    });
+                })
+                .catch(function(error) {
+                    console.error(error);
+                    document.getElementById('geocodeResult').innerHTML = '<span class="text-danger">Ошибка геокодирования</span>';
+                });
+        }, 800);
     }
 
     function loadVacanciesFromDB() {
@@ -271,28 +350,40 @@
         if (!auth.currentUser) { showNotification('Требуется авторизация'); return; }
         const title = document.getElementById('newTitle').value.trim();
         const company = document.getElementById('newCompany').value.trim();
+        const address = document.getElementById('newAddress').value.trim();
+        
         if (!title || !company) { showNotification('Заполните название и компанию'); return; }
+        if (!address) { showNotification('Введите адрес места работы'); return; }
+        if (foundLat === null || foundLng === null) { showNotification('Не удалось определить координаты адреса'); return; }
+        
         const district = document.getElementById('newDistrict').value;
         const newVac = {
             title, company,
             phone: document.getElementById('newPhone').value.trim(),
-            address: document.getElementById('newAddress').value.trim(),
+            address: address,
             salary_min: parseInt(document.getElementById('newSalaryMin').value) || 0,
             salary_max: parseInt(document.getElementById('newSalaryMax').value) || 0,
-            salary_text: `${document.getElementById('newSalaryMin').value || 0} - ${document.getElementById('newSalaryMax').value || 0} руб.`,
+            salary_text: (document.getElementById('newSalaryMin').value || 0) + ' - ' + (document.getElementById('newSalaryMax').value || 0) + ' руб.',
             district: district,
             type: document.getElementById('newType').value,
             schedule: document.getElementById('newSchedule').value.trim(),
             requirements: document.getElementById('newRequirements').value.trim(),
             description: document.getElementById('newDescription').value.trim(),
-            lat: getLatByDistrict(district),
-            lng: getLngByDistrict(district),
+            lat: foundLat,
+            lng: foundLng,
             createdBy: auth.currentUser.email,
             createdAt: new Date().toISOString()
         };
+        
         database.ref('vacancies').push(newVac).then(() => {
             showNotification('Вакансия добавлена');
-            ['newTitle','newCompany','newPhone','newAddress','newSalaryMin','newSalaryMax','newSchedule','newRequirements','newDescription'].forEach(id => document.getElementById(id).value = '');
+            ['newTitle','newCompany','newPhone','newSalaryMin','newSalaryMax','newSchedule','newRequirements','newDescription','newAddress'].forEach(id => document.getElementById(id).value = '');
+            foundLat = null;
+            foundLng = null;
+            document.getElementById('geocodeResult').innerHTML = '';
+            const adminMapDiv = document.getElementById('adminMap');
+            adminMapDiv.style.display = 'none';
+            if (tempMap) { tempMap.destroy(); tempMap = null; }
         }).catch(err => showNotification('Ошибка: ' + err.message));
     }
 
@@ -316,10 +407,10 @@
         if (!vacancies.length) { container.innerHTML = '<div class="text-muted">Нет вакансий</div>'; return; }
         let html = '';
         vacancies.forEach(v => {
-            html += `<div class="vacancy-card" style="border-left-color:#dc3545;">
-                        <strong>${v.title}</strong><br>${v.company}<br>${v.salary_text}<br>
-                        <button class="btn btn-danger btn-sm mt-2" onclick="deleteVacancy('${v.firebaseId}')">Удалить</button>
-                     </div>`;
+            html += '<div class="vacancy-card" style="border-left-color:#dc3545;">' +
+                        '<strong>' + v.title + '</strong><br>' + v.company + '<br>' + v.salary_text + '<br>' +
+                        '<button class="btn btn-danger btn-sm mt-2" onclick="deleteVacancy(\'' + v.firebaseId + '\')">Удалить</button>' +
+                    '</div>';
         });
         container.innerHTML = html;
     }
@@ -344,11 +435,11 @@
         const listDiv = document.getElementById('vacancyList');
         if (!filtered.length) listDiv.innerHTML = '<div class="alert alert-warning">Ничего не найдено</div>';
         else {
-            let html = `<h5>Найдено: ${filtered.length}</h5>`;
+            let html = '<h5>Найдено: ' + filtered.length + '</h5>';
             filtered.forEach(v => {
-                html += `<div class="vacancy-card" onclick='showDetails(${JSON.stringify(v)})'>
-                            <strong>${v.title}</strong><br>${v.company}<br>${v.salary_text}<br>${v.district}
-                         </div>`;
+                html += '<div class="vacancy-card" onclick=\'showDetails(' + JSON.stringify(v) + ')\'>' +
+                            '<strong>' + v.title + '</strong><br>' + v.company + '<br>' + v.salary_text + '<br>' + v.district +
+                        '</div>';
             });
             listDiv.innerHTML = html;
         }
@@ -357,18 +448,19 @@
             map.geoObjects.removeAll();
             if (oldMarker) { userMarker = oldMarker; map.geoObjects.add(userMarker); }
             filtered.forEach(v => {
-                const pm = new ymaps.Placemark([v.lat, v.lng], {
-                    balloonContentHeader: v.title,
-                    balloonContentBody: `${v.company}<br>${v.salary_text}<br>${v.district}`,
-                    balloonContentFooter: `<button onclick="buildRouteToVacancy(${v.lat},${v.lng})">Маршрут</button>`
-                }, { preset: 'islands#blueCircleIcon' });
-                pm.events.add('click', () => showDetails(v));
-                map.geoObjects.add(pm);
+                if (v.lat && v.lng) {
+                    const pm = new ymaps.Placemark([v.lat, v.lng], {
+                        balloonContentHeader: v.title,
+                        balloonContentBody: v.company + '<br>' + v.salary_text + '<br>' + v.district,
+                        balloonContentFooter: '<button onclick="buildRoute(' + v.lat + ',' + v.lng + ')">Маршрут</button>'
+                    }, { preset: 'islands#blueCircleIcon' });
+                    pm.events.add('click', () => showDetails(v));
+                    map.geoObjects.add(pm);
+                }
             });
         }
     }
 
-    // Расширенная карточка деталей
     function showDetails(v) {
         const div = document.getElementById('vacancyDetail');
         div.style.display = 'block';
@@ -378,59 +470,55 @@
         else if (v.type === 'part') typeText = 'Частичная занятость';
         else if (v.type === 'remote') typeText = 'Удалённая работа';
         
-        let scheduleHtml = v.schedule ? `<p><strong>График работы:</strong> ${v.schedule}</p>` : '';
-        let requirementsHtml = v.requirements ? `<p><strong>Требования:</strong> ${v.requirements}</p>` : '';
-        let phoneHtml = v.phone ? `<p><strong>Телефон:</strong> <a href="tel:${v.phone}">${v.phone}</a></p>` : '';
-        let addressHtml = v.address ? `<p><strong>Адрес:</strong> ${v.address}</p>` : '';
+        let scheduleHtml = v.schedule ? '<p><strong>График работы:</strong> ' + v.schedule + '</p>' : '';
+        let requirementsHtml = v.requirements ? '<p><strong>Требования:</strong> ' + v.requirements + '</p>' : '';
+        let phoneHtml = v.phone ? '<p><strong>Телефон:</strong> <a href="tel:' + v.phone + '">' + v.phone + '</a></p>' : '';
+        let addressHtml = v.address ? '<p><strong>Адрес:</strong> ' + v.address + '</p>' : '';
         
-        div.innerHTML = `
-            <h6>${v.title}</h6>
-            <p><strong>${v.company}</strong></p>
-            ${phoneHtml}
-            ${addressHtml}
-            <p><strong>Район:</strong> ${v.district}</p>
-            <p><strong>Зарплата:</strong> ${v.salary_text}</p>
-            <p><strong>Тип занятости:</strong> ${typeText}</p>
-            ${scheduleHtml}
-            ${requirementsHtml}
-            <p><strong>Описание:</strong><br>${v.description || 'Не указано'}</p>
-            <hr>
-            <button class="btn-route" onclick="buildRouteToVacancy(${v.lat},${v.lng})">Маршрут</button>
-            <button class="btn-share" onclick="shareVacancy(${JSON.stringify(v).replace(/"/g,'&quot;')})">Поделиться</button>
-            <button class="btn-share btn-copy-all" onclick="copyFullVacancy(${JSON.stringify(v).replace(/"/g,'&quot;')})">Копировать всё</button>
-            <button class="btn-route btn-secondary" onclick="document.getElementById('vacancyDetail').style.display='none'">Закрыть</button>
-        `;
+        div.innerHTML = '<h6>' + v.title + '</h6>' +
+            '<p><strong>' + v.company + '</strong></p>' +
+            phoneHtml +
+            addressHtml +
+            '<p><strong>Район:</strong> ' + v.district + '</p>' +
+            '<p><strong>Зарплата:</strong> ' + v.salary_text + '</p>' +
+            '<p><strong>Тип занятости:</strong> ' + typeText + '</p>' +
+            scheduleHtml +
+            requirementsHtml +
+            '<p><strong>Описание:</strong><br>' + (v.description || 'Не указано') + '</p>' +
+            '<hr>' +
+            '<button class="btn-route" onclick="buildRoute(' + v.lat + ',' + v.lng + ')">Маршрут</button>' +
+            '<button class="btn-share" onclick="shareVacancy(' + JSON.stringify(v).replace(/"/g,'&quot;') + ')">Поделиться</button>' +
+            '<button class="btn-share btn-copy-all" onclick="copyFullVacancy(' + JSON.stringify(v).replace(/"/g,'&quot;') + ')">Копировать всё</button>' +
+            '<button class="btn-route btn-secondary" onclick="document.getElementById(\'vacancyDetail\').style.display=\'none\'">Закрыть</button>';
     }
 
-    // Копирование полной информации о вакансии
     function copyFullVacancy(v) {
         let typeText = '';
         if (v.type === 'full') typeText = 'Полная занятость';
         else if (v.type === 'part') typeText = 'Частичная занятость';
         else if (v.type === 'remote') typeText = 'Удалённая работа';
         
-        let text = `ВАКАНСИЯ\n`;
-        text += `Должность: ${v.title}\n`;
-        text += `Компания: ${v.company}\n`;
-        if (v.phone) text += `Телефон: ${v.phone}\n`;
-        if (v.address) text += `Адрес: ${v.address}\n`;
-        text += `Район: ${v.district}\n`;
-        text += `Зарплата: ${v.salary_text}\n`;
-        text += `Тип занятости: ${typeText}\n`;
-        if (v.schedule) text += `График: ${v.schedule}\n`;
-        if (v.requirements) text += `Требования: ${v.requirements}\n`;
-        if (v.description) text += `Описание: ${v.description}\n`;
-        text += `\nЦентр занятости населения г. Сальск`;
+        let text = 'ВАКАНСИЯ\n';
+        text += 'Должность: ' + v.title + '\n';
+        text += 'Компания: ' + v.company + '\n';
+        if (v.phone) text += 'Телефон: ' + v.phone + '\n';
+        if (v.address) text += 'Адрес: ' + v.address + '\n';
+        text += 'Район: ' + v.district + '\n';
+        text += 'Зарплата: ' + v.salary_text + '\n';
+        text += 'Тип занятости: ' + typeText + '\n';
+        if (v.schedule) text += 'График: ' + v.schedule + '\n';
+        if (v.requirements) text += 'Требования: ' + v.requirements + '\n';
+        if (v.description) text += 'Описание: ' + v.description + '\n';
+        text += '\nЦентр занятости населения г. Сальск';
         
         navigator.clipboard.writeText(text).then(() => showNotification('Полная информация скопирована'));
     }
 
     function shareVacancy(v) {
-        const text = `${v.title} в ${v.company}\nЗарплата: ${v.salary_text}\nРайон: ${v.district}\n${v.description || ''}`;
+        const text = v.title + ' в ' + v.company + '\nЗарплата: ' + v.salary_text + '\nРайон: ' + v.district + '\n' + (v.description || '');
         navigator.clipboard.writeText(text).then(() => showNotification('Скопировано'));
     }
 
-    function searchVacancies() { updateUI(); }
     function resetFilters() {
         document.getElementById('searchKeyword').value = '';
         document.getElementById('salaryFrom').value = '';
@@ -453,7 +541,6 @@
         });
     }
 
-    // Авторизация
     let loginModal;
     window.addEventListener('load', () => {
         loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
@@ -461,6 +548,11 @@
         loadVacanciesFromDB();
         updateAuthUI(null);
         document.getElementById('locateMeBtn').addEventListener('click', locateUser);
+        
+        const addressInput = document.getElementById('newAddress');
+        addressInput.addEventListener('input', (e) => {
+            autoGeocode(e.target.value);
+        });
     });
 
     function updateAuthUI(user) {
@@ -471,7 +563,7 @@
         if (user) {
             showLoginBtn.style.display = 'none';
             logoutBtn.style.display = 'inline-block';
-            userStatus.innerHTML = `Сотрудник: <strong>${user.email}</strong>`;
+            userStatus.innerHTML = 'Сотрудник: <strong>' + user.email + '</strong>';
             adminTab.style.display = 'block';
             if (document.getElementById('adminPanel').classList.contains('active')) updateAdminList();
         } else {
@@ -498,7 +590,7 @@
     document.getElementById('search-tab')?.addEventListener('shown.bs.tab', () => map?.invalidateSize());
     document.getElementById('districtSelect').addEventListener('change', (e) => {
         const district = e.target.value;
-        if (district && map) { const lat = getLatByDistrict(district); const lng = getLngByDistrict(district); map.setCenter([lat, lng], 14); showNotification(`Карта перемещена к району ${district}`); }
+        if (district && map) { const lat = getLatByDistrict(district); const lng = getLngByDistrict(district); map.setCenter([lat, lng], 14); showNotification('Карта перемещена к району ' + district); }
         updateUI();
     });
 
