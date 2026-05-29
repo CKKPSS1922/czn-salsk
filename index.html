@@ -34,38 +34,95 @@
             --user-info-bg: #1f2a4a;
         }
         
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        
         body {
             background: var(--bg-body);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             color: var(--text-color);
             transition: background 0.3s ease, color 0.3s ease;
         }
-        .container { 
-            max-width: 1400px; 
-            background: var(--bg-container); 
-            border-radius: 0; 
-            padding: 12px; 
-            box-shadow: none;
-            min-height: 100vh;
+        
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-container);
         }
-        #map { 
-            height: 400px; 
-            width: 100%; 
-            border-radius: 12px; 
-            margin-top: 10px; 
+        
+        .app-header {
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background: var(--bg-container);
         }
+        
+        .app-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 400px;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .map-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .filter-box {
+            background: var(--bg-filter);
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            overflow-y: auto;
+            max-height: 45%;
+        }
+        
+        .vacancy-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
         .vacancy-card { 
             background: var(--bg-card); 
-            border-radius: 12px; 
-            padding: 14px; 
-            margin-bottom: 12px; 
+            border-radius: 10px; 
+            padding: 12px; 
+            margin-bottom: 8px; 
             cursor: pointer; 
             border-left: 4px solid #0d6efd; 
             position: relative;
             transition: all 0.2s ease;
             color: var(--text-color);
+            font-size: 0.9rem;
         }
         .vacancy-card.favorite { 
             border-left-color: #ffc107; 
@@ -79,67 +136,65 @@
             position: absolute; 
             top: 10px; 
             right: 12px; 
-            font-size: 1.3rem; 
+            font-size: 1.2rem; 
             color: #ffc107; 
         }
-        .vacancy-card:active { 
+        .vacancy-card:hover { 
             background: var(--bg-card-hover); 
-            transform: scale(0.99); 
         }
-        .filter-box { 
-            background: var(--bg-filter); 
-            border-radius: 16px; 
-            padding: 15px; 
-            margin-bottom: 16px; 
-        }
-        .vacancy-list { 
-            max-height: none; 
-            overflow-y: visible; 
-        }
-        .detail-card { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            width: 100%; 
-            background: var(--bg-container); 
-            border-radius: 20px 20px 0 0; 
-            padding: 20px; 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15); 
-            z-index: 1050; 
-            display: none; 
-            max-height: 70vh; 
+        
+        .detail-overlay {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 420px;
+            max-height: 60vh;
+            background: var(--bg-container);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
             overflow-y: auto;
-            border-top: 1px solid var(--border-color);
+            border: 1px solid var(--border-color);
             color: var(--text-color);
         }
-        .detail-card h6 { 
+        .detail-overlay h6 { 
             font-size: 1.2rem; 
             font-weight: bold; 
-            margin-bottom: 12px; 
+            margin-bottom: 10px; 
             padding-right: 30px;
         }
-        .detail-card p { 
-            margin-bottom: 8px; 
-            font-size: 0.9rem; 
+        .detail-overlay p { 
+            margin-bottom: 6px; 
+            font-size: 0.85rem; 
         }
+        
         .btn-route, .btn-share, .btn-favorite, .btn-favorite-remove, .btn-copy-all { 
             padding: 8px 16px; 
             margin-right: 8px; 
-            margin-top: 10px; 
-            font-size: 0.9rem; 
-            border-radius: 30px; 
+            margin-top: 8px; 
+            font-size: 0.85rem; 
+            border-radius: 25px; 
             display: inline-block;
             cursor: pointer;
+            border: none;
         }
-        .btn-route { background-color: #0d6efd; color: white; border: none; }
-        .btn-favorite { background-color: #ffc107; color: #000; border: none; }
-        .btn-favorite-remove { background-color: #dc3545; color: white; border: none; }
-        .btn-share { background-color: #0d6efd; color: white; border: none; }
-        .btn-copy-all { background-color: #28a745; color: white; border: none; }
+        .btn-route { background-color: #0d6efd; color: white; }
+        .btn-favorite { background-color: #ffc107; color: #000; }
+        .btn-favorite-remove { background-color: #dc3545; color: white; }
+        .btn-share { background-color: #0d6efd; color: white; }
+        .btn-copy-all { background-color: #28a745; color: white; }
         .btn-close-card { background-color: #6c757d; color: white; border: none; }
         .btn-edit { background-color: #17a2b8; color: white; border: none; margin-right: 5px; }
-        .admin-panel { background: var(--admin-panel-bg); border-radius: 16px; padding: 15px; margin-bottom: 20px; }
+        
+        .admin-panel { 
+            background: var(--admin-panel-bg); 
+            padding: 15px; 
+            overflow-y: auto; 
+            height: 100%; 
+        }
+        
         .toast-notify { 
             position: fixed; 
             bottom: 20px; 
@@ -149,7 +204,7 @@
             color: white; 
             padding: 10px 20px; 
             border-radius: 40px; 
-            z-index: 1060; 
+            z-index: 2000; 
             opacity: 0; 
             transition: opacity 0.3s; 
             pointer-events: none; 
@@ -160,18 +215,20 @@
         .toast-notify.error {
             background: #dc3545;
         }
+        
         .user-info { 
             display: flex; 
             justify-content: flex-end; 
             align-items: center; 
-            gap: 10px; 
-            margin-bottom: 12px; 
+            gap: 8px; 
             flex-wrap: wrap;
+            margin-bottom: 8px;
         }
+        
         .login-btn, .logout-btn, .loc-btn, .theme-btn, .mobile-adapt-btn { 
-            padding: 8px 16px; 
-            border-radius: 30px; 
-            font-size: 0.85rem; 
+            padding: 6px 14px; 
+            border-radius: 25px; 
+            font-size: 0.8rem; 
             border: none; 
             font-weight: 500;
             cursor: pointer;
@@ -185,80 +242,78 @@
             color: white; 
             display: inline-block;
         }
+        
         .instruction { 
             background: var(--instruction-bg); 
-            padding: 10px; 
-            border-radius: 12px; 
-            margin-top: 12px; 
-            font-size: 0.8rem; 
+            padding: 8px; 
+            border-radius: 8px; 
+            margin-top: 8px; 
+            font-size: 0.75rem; 
             text-align: center; 
             color: var(--text-color);
         }
-        .form-label { font-weight: 600; margin-top: 12px; font-size: 0.85rem; color: var(--text-color); }
-        .address-start { display: flex; gap: 8px; margin: 12px 0; }
-        .address-start input { flex: 1; border-radius: 30px; padding: 10px 15px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-color); }
-        .address-start button { border-radius: 30px; padding: 0 16px; white-space: nowrap; }
-        .filter-favorite { margin: 12px 0; }
-        .filter-favorite input { transform: scale(1.1); margin-right: 8px; }
-        .filter-favorite label { font-weight: normal; }
-        .nav-tabs .nav-link { font-size: 0.9rem; padding: 10px 16px; color: var(--text-color); }
+        
+        .form-label { font-weight: 600; margin-top: 10px; font-size: 0.8rem; color: var(--text-color); }
+        .address-start { display: flex; gap: 6px; margin: 10px 0; }
+        .address-start input { flex: 1; border-radius: 25px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-color); }
+        .address-start button { border-radius: 25px; padding: 0 12px; white-space: nowrap; }
+        .filter-favorite { margin: 10px 0; }
+        .filter-favorite input { margin-right: 6px; }
+        
+        .nav-tabs .nav-link { font-size: 0.85rem; padding: 8px 16px; color: var(--text-color); cursor: pointer; }
         .nav-tabs .nav-link.active { background: var(--bg-container); color: var(--text-color); border-color: var(--border-color); }
-        .form-control, .form-select { background: var(--bg-container); color: var(--text-color); border-color: var(--border-color); }
+        
+        .form-control, .form-select { 
+            background: var(--bg-container); 
+            color: var(--text-color); 
+            border-color: var(--border-color); 
+            font-size: 0.85rem;
+        }
         .form-control:focus, .form-select:focus { background: var(--bg-container); color: var(--text-color); }
         .invalid-field { border-color: #dc3545 !important; }
-        .error-message { color: #dc3545; font-size: 0.75rem; margin-top: 3px; }
+        .error-message { color: #dc3545; font-size: 0.7rem; margin-top: 2px; }
         
-        .phone-input {
-            letter-spacing: 1px;
-        }
-        
-        @media (min-width: 768px) {
-            .container { padding: 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: 20px; }
-            #map { height: 550px; }
-            .detail-card { position: absolute; bottom: 20px; right: 20px; width: 380px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); top: auto; left: auto; border-top: none; }
-            .vacancy-list { max-height: 500px; overflow-y: auto; }
-            .toast-notify { left: 20px; transform: none; white-space: normal; }
-        }
+        .phone-input { letter-spacing: 1px; }
         
         .detail-close {
             position: absolute;
-            top: 12px;
-            right: 16px;
-            font-size: 24px;
+            top: 10px;
+            right: 14px;
+            font-size: 22px;
             cursor: pointer;
             color: #999;
             background: none;
             border: none;
             line-height: 1;
         }
-        @media (max-width: 767px) {
-            .detail-close { display: block; }
-        }
-        @media (min-width: 768px) {
-            .detail-close { display: none; }
+        
+        .tab-content {
+            flex: 1;
+            overflow: hidden;
         }
         
-        .row {
+        .tab-pane {
+            height: 100%;
+        }
+        
+        #searchPanel {
             display: flex;
-            flex-wrap: wrap;
+            height: 100%;
         }
-        @media (max-width: 767px) {
-            .row { flex-direction: column; }
-            .col-md-4, .col-md-8 { width: 100%; }
-        }
+        
         .filter-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        .filter-header h5 { margin: 0; }
+        .filter-header h5 { margin: 0; font-size: 0.95rem; }
         .filter-toggle { 
-            font-size: 1.2rem; 
+            font-size: 1rem; 
             transition: transform 0.3s ease;
             display: inline-block;
             width: 30px;
@@ -276,57 +331,17 @@
         .filter-body.collapsed { 
             display: none; 
         }
-
-        /* Стили для мобильной адаптации */
-        body.mobile-optimized .row {
-            flex-direction: column;
-        }
-        body.mobile-optimized .col-md-4, 
-        body.mobile-optimized .col-md-8 {
-            width: 100%;
-        }
-        body.mobile-optimized #map {
-            height: 400px;
-        }
-        body.mobile-optimized .vacancy-list {
-            max-height: none;
-            overflow-y: visible;
-        }
-        body.mobile-optimized .detail-card {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            border-radius: 20px 20px 0 0;
-            top: auto;
-            border-top: 1px solid var(--border-color);
-        }
-        body.mobile-optimized .detail-close {
-            display: block;
-        }
-        body.mobile-optimized .toast-notify {
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-        }
-        body.mobile-optimized .container {
-            margin: 0;
-            border-radius: 0;
-            padding: 12px;
-        }
         
-        /* Стили для инструкции */
         .permission-instruction {
             background: #fff3cd;
             border: 1px solid #ffc107;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 10px 0;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 8px 0;
             color: #856404;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: none;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         body.dark-theme .permission-instruction {
             background: #2a2a1a;
@@ -335,39 +350,109 @@
         }
         .permission-instruction strong {
             display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
         }
         .permission-instruction .device-instruction {
-            margin: 5px 0;
-            padding-left: 15px;
+            margin: 4px 0;
+            padding-left: 12px;
+        }
+
+        /* Мобильная версия */
+        @media (max-width: 767px) {
+            .app-main {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: 45%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .map-area {
+                height: 55%;
+            }
+            
+            .filter-box {
+                max-height: 50%;
+            }
+            
+            .detail-overlay {
+                width: 90%;
+                left: 5%;
+                right: 5%;
+                bottom: 16px;
+                max-height: 50vh;
+            }
+        }
+        
+        /* Мобильный оптимизированный режим */
+        body.mobile-optimized .app-main {
+            flex-direction: column;
+        }
+        
+        body.mobile-optimized .sidebar {
+            width: 100%;
+            min-width: 100%;
+            height: 45%;
+            border-right: none;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        body.mobile-optimized .map-area {
+            height: 55%;
+        }
+        
+        body.mobile-optimized .filter-box {
+            max-height: 50%;
+        }
+        
+        body.mobile-optimized .detail-overlay {
+            width: 90%;
+            left: 5%;
+            right: 5%;
+            bottom: 16px;
+            max-height: 50vh;
+        }
+        
+        body.mobile-optimized .container {
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="user-info">
-        <div id="userStatus"></div>
-        <button id="mobileAdaptBtn" class="mobile-adapt-btn">Мобильная версия</button>
-        <button id="themeToggleBtn" class="theme-btn">Тёмная тема</button>
-        <button id="showLoginBtn" class="login-btn">Вход для сотрудника</button>
-        <button id="logoutBtn" class="logout-btn" style="display: none;">Выйти</button>
+<div class="app-container">
+    <!-- Шапка -->
+    <div class="app-header">
+        <div class="user-info">
+            <div id="userStatus" style="flex:1;"></div>
+            <button id="mobileAdaptBtn" class="mobile-adapt-btn">Мобильная версия</button>
+            <button id="themeToggleBtn" class="theme-btn">Тёмная тема</button>
+            <button id="showLoginBtn" class="login-btn">Вход для сотрудника</button>
+            <button id="logoutBtn" class="logout-btn" style="display: none;">Выйти</button>
+        </div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchPanel" type="button">Поиск работы</button>
+            </li>
+            <li class="nav-item" id="adminTabItem" style="display: none;">
+                <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#adminPanel" type="button">Администрирование</button>
+            </li>
+        </ul>
     </div>
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchPanel" type="button">Поиск работы</button>
-        </li>
-        <li class="nav-item" id="adminTabItem" style="display: none;">
-            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#adminPanel" type="button">Администрирование</button>
-        </li>
-    </ul>
-
-    <div class="tab-content mt-3">
-        <div class="tab-pane fade show active" id="searchPanel">
-            <div class="row">
-                <div class="col-md-4">
+    <!-- Основной контент -->
+    <div class="app-main">
+        <div class="tab-content" id="mainTabContent">
+            <!-- Панель поиска -->
+            <div class="tab-pane fade show active" id="searchPanel">
+                <div class="sidebar">
                     <div class="filter-box">
                         <div class="filter-header" onclick="toggleFilters()">
                             <h5>Параметры поиска</h5>
@@ -419,7 +504,7 @@
                             </div>
                             <div id="permissionInstruction" class="permission-instruction"></div>
                         </div>
-                        <hr>
+                        <hr class="my-2">
                         <div id="routeInfo" class="small text-muted"></div>
                         <div class="instruction">
                             Маршрут: укажите откуда ехать (введите адрес, нажмите «Моё местоположение» или кликните на карте), затем кликните по вакансии и нажмите «Маршрут».
@@ -427,9 +512,9 @@
                     </div>
                     <div class="vacancy-list" id="vacancyList"></div>
                 </div>
-                <div class="col-md-8">
+                <div class="map-area">
                     <div id="map"></div>
-                    <div id="vacancyDetail" class="detail-card">
+                    <div id="vacancyDetail" class="detail-overlay">
                         <button class="detail-close" onclick="closeDetailCard()">×</button>
                         <div id="vacancyDetailContent"></div>
                         <div class="mt-2">
@@ -438,67 +523,68 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="tab-pane fade" id="adminPanel">
-            <div class="admin-panel">
-                <h5>Добавить новую вакансию</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-label">Название должности *</div>
-                        <input type="text" id="newTitle" class="form-control" placeholder="Программист">
-                        <div class="form-label">Компания *</div>
-                        <input type="text" id="newCompany" class="form-control" placeholder="ООО Ромашка">
-                        <div class="form-label">Контактный телефон</div>
-                        <input type="tel" id="newPhone" class="form-control phone-input" placeholder="+7 (___) ___-__-__" maxlength="18">
-                        <div class="error-message" id="phoneError"></div>
-                        <div class="form-label">Район *</div>
-                        <select id="newDistrict" class="form-select">
-                            <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
-                            <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
-                        </select>
+            <!-- Панель администратора -->
+            <div class="tab-pane fade" id="adminPanel">
+                <div class="admin-panel">
+                    <h5>Добавить новую вакансию</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-label">Название должности *</div>
+                            <input type="text" id="newTitle" class="form-control" placeholder="Программист">
+                            <div class="form-label">Компания *</div>
+                            <input type="text" id="newCompany" class="form-control" placeholder="ООО Ромашка">
+                            <div class="form-label">Контактный телефон</div>
+                            <input type="tel" id="newPhone" class="form-control phone-input" placeholder="+7 (___) ___-__-__" maxlength="18">
+                            <div class="error-message" id="phoneError"></div>
+                            <div class="form-label">Район *</div>
+                            <select id="newDistrict" class="form-select">
+                                <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
+                                <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-label">Зарплата от (руб) *</div>
+                            <input type="number" id="newSalaryMin" class="form-control" placeholder="30000">
+                            <div class="form-label">Зарплата до (руб) *</div>
+                            <input type="number" id="newSalaryMax" class="form-control" placeholder="50000">
+                            <div class="form-label">Тип занятости *</div>
+                            <select id="newType" class="form-select">
+                                <option value="full">Полная занятость</option>
+                                <option value="part">Частичная занятость</option>
+                                <option value="remote">Удалённая работа</option>
+                            </select>
+                            <div class="form-label">График работы</div>
+                            <input type="text" id="newSchedule" class="form-control" placeholder="5/2, с 9:00 до 18:00">
+                            <div class="form-label">Требования к соискателю</div>
+                            <input type="text" id="newRequirements" class="form-control" placeholder="Опыт от 1 года, образование">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-label">Зарплата от (руб) *</div>
-                        <input type="number" id="newSalaryMin" class="form-control" placeholder="30000">
-                        <div class="form-label">Зарплата до (руб) *</div>
-                        <input type="number" id="newSalaryMax" class="form-control" placeholder="50000">
-                        <div class="form-label">Тип занятости *</div>
-                        <select id="newType" class="form-select">
-                            <option value="full">Полная занятость</option>
-                            <option value="part">Частичная занятость</option>
-                            <option value="remote">Удалённая работа</option>
-                        </select>
-                        <div class="form-label">График работы</div>
-                        <input type="text" id="newSchedule" class="form-control" placeholder="5/2, с 9:00 до 18:00">
-                        <div class="form-label">Требования к соискателю</div>
-                        <input type="text" id="newRequirements" class="form-control" placeholder="Опыт от 1 года, образование">
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div class="form-label">Адрес места работы *</div>
+                            <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
+                            <div class="coord-hint">Введите адрес. Координаты определятся автоматически.</div>
+                        </div>
                     </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-12">
-                        <div class="form-label">Адрес места работы *</div>
-                        <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
-                        <div class="coord-hint">Введите адрес. Координаты определятся автоматически.</div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div id="geocodeResult" class="geocode-result"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-12">
-                        <div id="geocodeResult" class="geocode-result"></div>
+                    <div id="adminMap" style="height: 250px; width: 100%; margin-top: 10px; display: none;"></div>
+                    <div class="mt-2">
+                        <div class="form-label">Описание вакансии</div>
+                        <textarea id="newDescription" class="form-control" rows="3" placeholder="Обязанности, условия работы..."></textarea>
                     </div>
+                    <div class="mt-3">
+                        <button class="btn btn-success" id="addVacancyBtn">Добавить вакансию</button>
+                        <button class="btn btn-secondary" onclick="loadVacanciesFromDB()">Обновить список</button>
+                    </div>
+                    <hr>
+                    <h5>Список вакансий (управление)</h5>
+                    <div id="vacancyAdminList" class="vacancy-list" style="max-height: 400px;"></div>
                 </div>
-                <div id="adminMap" style="height: 250px; width: 100%; margin-top: 10px; display: none;"></div>
-                <div class="mt-2">
-                    <div class="form-label">Описание вакансии</div>
-                    <textarea id="newDescription" class="form-control" rows="3" placeholder="Обязанности, условия работы..."></textarea>
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-success" id="addVacancyBtn">Добавить вакансию</button>
-                    <button class="btn btn-secondary" onclick="loadVacanciesFromDB()">Обновить список</button>
-                </div>
-                <hr>
-                <h5>Список вакансий (управление)</h5>
-                <div id="vacancyAdminList" class="vacancy-list" style="max-height: 400px;"></div>
             </div>
         </div>
     </div>
@@ -521,7 +607,6 @@
     </div>
 </div>
 
-<!-- Модальное окно редактирования -->
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -967,17 +1052,14 @@
         
         showNotification('Доступ к геолокации запрещен. Смотрите инструкцию ниже.', true);
         
-        // Прокручиваем к инструкции
         setTimeout(() => {
             instructionDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 300);
     }
 
     function locateUser() {
-        // Скрываем предыдущую инструкцию
         document.getElementById('permissionInstruction').style.display = 'none';
         
-        // Проверяем поддержку геолокации
         if (!navigator.geolocation) {
             showNotification('Геолокация не поддерживается вашим браузером', true);
             return;
@@ -991,23 +1073,18 @@
             maximumAge: 0
         };
         
-        // Напрямую запрашиваем геолокацию - браузер сам покажет диалог разрешения
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                console.log('Геолокация успешна:', position);
                 setStartPoint({ 
                     lat: position.coords.latitude, 
                     lng: position.coords.longitude 
                 }, 'geolocation');
             },
             (error) => {
-                console.error('Ошибка геолокации:', error);
-                
                 if (error.code === error.PERMISSION_DENIED) {
                     showPermissionDeniedMessage();
                 } else {
                     let errorMessage = 'Не удалось определить местоположение. ';
-                    
                     switch(error.code) {
                         case error.POSITION_UNAVAILABLE:
                             errorMessage += 'Информация о местоположении недоступна. Проверьте подключение к интернету.';
@@ -1019,7 +1096,6 @@
                             errorMessage += 'Произошла неизвестная ошибка.';
                             break;
                     }
-                    
                     showNotification(errorMessage, true);
                 }
             },
