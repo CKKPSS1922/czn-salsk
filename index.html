@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>ЦЗН г. Сальск - Поиск работы</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -16,8 +19,7 @@
             --text-muted: #6c757d;
             --border-color: #dee2e6;
             --instruction-bg: #e9ecef;
-            --admin-panel-bg: #e9ecef;
-            --user-info-bg: #e9ecef;
+            --admin-panel-bg: #f8f9fa;
         }
         
         body.dark-theme {
@@ -31,33 +33,26 @@
             --border-color: #2a3a5a;
             --instruction-bg: #1f2a4a;
             --admin-panel-bg: #1f2a4a;
-            --user-info-bg: #1f2a4a;
         }
         
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         
         html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
             overflow: hidden;
         }
         
         body {
             background: var(--bg-body);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: var(--text-color);
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.3s, color 0.3s;
         }
         
         .app-container {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column;
             background: var(--bg-container);
         }
         
@@ -70,8 +65,60 @@
         
         .app-main {
             flex: 1;
-            display: flex;
             overflow: hidden;
+            position: relative;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            background: var(--bg-container);
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn.active {
+            border-bottom-color: #0d6efd;
+            color: #0d6efd;
+        }
+        
+        .tab-panel {
+            display: none;
+            height: calc(100% - 45px);
+        }
+        
+        .tab-panel.active {
+            display: flex;
+        }
+        
+        #searchPanel {
+            display: none;
+        }
+        
+        #searchPanel.active {
+            display: flex;
+        }
+        
+        #adminPanel {
+            display: none;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--admin-panel-bg);
+            color: var(--text-color);
+        }
+        
+        #adminPanel.active {
+            display: block;
         }
         
         .sidebar {
@@ -90,11 +137,9 @@
         }
         
         #map {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
         }
         
         .filter-box {
@@ -119,35 +164,20 @@
             margin-bottom: 8px; 
             cursor: pointer; 
             border-left: 4px solid #0d6efd; 
-            position: relative;
-            transition: all 0.2s ease;
             color: var(--text-color);
             font-size: 0.9rem;
+            transition: all 0.2s;
         }
-        .vacancy-card.favorite { 
-            border-left-color: #ffc107; 
-            background: #fff8e7; 
-        }
-        body.dark-theme .vacancy-card.favorite {
-            background: #2a3a2a;
-            border-left-color: #ffc107;
-        }
-        .favorite-star { 
-            position: absolute; 
-            top: 10px; 
-            right: 12px; 
-            font-size: 1.2rem; 
-            color: #ffc107; 
-        }
-        .vacancy-card:hover { 
-            background: var(--bg-card-hover); 
-        }
+        .vacancy-card.favorite { border-left-color: #ffc107; background: #fff8e7; }
+        body.dark-theme .vacancy-card.favorite { background: #2a3a2a; }
+        .vacancy-card:hover { background: var(--bg-card-hover); }
+        
+        .favorite-star { position: absolute; top: 10px; right: 12px; font-size: 1.2rem; color: #ffc107; }
         
         .detail-overlay {
             display: none;
             position: absolute;
-            bottom: 20px;
-            right: 20px;
+            bottom: 20px; right: 20px;
             width: 420px;
             max-height: 60vh;
             background: var(--bg-container);
@@ -159,432 +189,263 @@
             border: 1px solid var(--border-color);
             color: var(--text-color);
         }
-        .detail-overlay h6 { 
-            font-size: 1.2rem; 
-            font-weight: bold; 
-            margin-bottom: 10px; 
-            padding-right: 30px;
-        }
-        .detail-overlay p { 
-            margin-bottom: 6px; 
-            font-size: 0.85rem; 
-        }
         
-        .btn-route, .btn-share, .btn-favorite, .btn-favorite-remove, .btn-copy-all { 
-            padding: 8px 16px; 
-            margin-right: 8px; 
-            margin-top: 8px; 
-            font-size: 0.85rem; 
-            border-radius: 25px; 
-            display: inline-block;
-            cursor: pointer;
-            border: none;
+        .btn-route, .btn-share, .btn-fav, .btn-fav-remove, .btn-copy-all { 
+            padding: 8px 16px; margin-right: 8px; margin-top: 8px; 
+            font-size: 0.85rem; border-radius: 25px; 
+            display: inline-block; cursor: pointer; border: none;
         }
         .btn-route { background-color: #0d6efd; color: white; }
-        .btn-favorite { background-color: #ffc107; color: #000; }
-        .btn-favorite-remove { background-color: #dc3545; color: white; }
-        .btn-share { background-color: #0d6efd; color: white; }
-        .btn-copy-all { background-color: #28a745; color: white; }
-        .btn-close-card { background-color: #6c757d; color: white; border: none; }
-        .btn-edit { background-color: #17a2b8; color: white; border: none; margin-right: 5px; }
-        
-        .admin-panel { 
-            background: var(--admin-panel-bg); 
-            padding: 15px; 
-            overflow-y: auto; 
-            height: 100%; 
-        }
+        .btn-fav { background-color: #ffc107; color: #000; }
+        .btn-fav-remove { background-color: #dc3545; color: white; }
+        .btn-share, .btn-copy-all { background-color: #0d6efd; color: white; }
+        .btn-copy-all { background-color: #28a745; }
+        .btn-close-card { background-color: #6c757d; color: white; border: none; border-radius: 25px; padding: 8px 16px; cursor: pointer; }
+        .btn-edit { background-color: #17a2b8; color: white; border: none; border-radius: 25px; padding: 6px 14px; cursor: pointer; margin-right: 5px; }
+        .btn-delete { background-color: #dc3545; color: white; border: none; border-radius: 25px; padding: 6px 14px; cursor: pointer; }
         
         .toast-notify { 
-            position: fixed; 
-            bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            background: #28a745; 
-            color: white; 
-            padding: 10px 20px; 
-            border-radius: 40px; 
-            z-index: 2000; 
-            opacity: 0; 
-            transition: opacity 0.3s; 
-            pointer-events: none; 
-            font-size: 0.9rem;
-            white-space: nowrap;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #28a745; color: white; padding: 10px 20px; border-radius: 40px; 
+            z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            font-size: 0.9rem; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .toast-notify.error {
-            background: #dc3545;
-        }
+        .toast-notify.error { background: #dc3545; }
         
         .user-info { 
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: center; 
-            gap: 8px; 
-            flex-wrap: wrap;
-            margin-bottom: 8px;
+            display: flex; justify-content: flex-end; align-items: center; 
+            gap: 8px; flex-wrap: wrap; margin-bottom: 8px;
         }
         
-        .login-btn, .logout-btn, .loc-btn, .theme-btn, .mobile-adapt-btn { 
-            padding: 6px 14px; 
-            border-radius: 25px; 
-            font-size: 0.8rem; 
-            border: none; 
-            font-weight: 500;
-            cursor: pointer;
+        .login-btn, .logout-btn, .theme-btn, .mobile-adapt-btn { 
+            padding: 6px 14px; border-radius: 25px; font-size: 0.8rem; 
+            border: none; font-weight: 500; cursor: pointer;
         }
         .login-btn { background-color: #0d6efd; color: white; }
-        .logout-btn { background-color: #dc3545; color: white; }
-        .loc-btn { background-color: #fd7e14; color: white; }
+        .logout-btn { background-color: #dc3545; color: white; display: none; }
         .theme-btn { background-color: #6c757d; color: white; }
-        .mobile-adapt-btn { 
-            background-color: #20c997; 
-            color: white; 
-            display: inline-block;
-        }
+        .mobile-adapt-btn { background-color: #20c997; color: white; }
         
         .instruction { 
-            background: var(--instruction-bg); 
-            padding: 8px; 
-            border-radius: 8px; 
-            margin-top: 8px; 
-            font-size: 0.75rem; 
-            text-align: center; 
-            color: var(--text-color);
+            background: var(--instruction-bg); padding: 8px; border-radius: 8px; 
+            margin-top: 8px; font-size: 0.75rem; text-align: center; color: var(--text-color);
         }
         
-        .form-label { font-weight: 600; margin-top: 10px; font-size: 0.8rem; color: var(--text-color); }
+        .form-label { font-weight: 600; margin-top: 10px; font-size: 0.85rem; color: var(--text-color); }
         .address-start { display: flex; gap: 6px; margin: 10px 0; }
         .address-start input { flex: 1; border-radius: 25px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-color); }
         .address-start button { border-radius: 25px; padding: 0 12px; white-space: nowrap; }
-        .filter-favorite { margin: 10px 0; }
-        .filter-favorite input { margin-right: 6px; }
-        
-        .nav-tabs .nav-link { font-size: 0.85rem; padding: 8px 16px; color: var(--text-color); cursor: pointer; }
-        .nav-tabs .nav-link.active { background: var(--bg-container); color: var(--text-color); border-color: var(--border-color); }
         
         .form-control, .form-select { 
-            background: var(--bg-container); 
-            color: var(--text-color); 
-            border-color: var(--border-color); 
-            font-size: 0.85rem;
+            background: var(--bg-container); color: var(--text-color); 
+            border-color: var(--border-color); font-size: 0.85rem;
         }
         .form-control:focus, .form-select:focus { background: var(--bg-container); color: var(--text-color); }
-        .invalid-field { border-color: #dc3545 !important; }
-        .error-message { color: #dc3545; font-size: 0.7rem; margin-top: 2px; }
-        
-        .phone-input { letter-spacing: 1px; }
         
         .detail-close {
-            position: absolute;
-            top: 10px;
-            right: 14px;
-            font-size: 22px;
-            cursor: pointer;
-            color: #999;
-            background: none;
-            border: none;
-            line-height: 1;
-        }
-        
-        .tab-content {
-            flex: 1;
-            overflow: hidden;
-        }
-        
-        .tab-pane {
-            height: 100%;
-        }
-        
-        #searchPanel {
-            display: flex;
-            height: 100%;
+            position: absolute; top: 10px; right: 14px; font-size: 22px;
+            cursor: pointer; color: #999; background: none; border: none;
         }
         
         .filter-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            margin-bottom: 8px;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; margin-bottom: 8px;
+            user-select: none; -webkit-user-select: none;
         }
         .filter-header h5 { margin: 0; font-size: 0.95rem; }
         .filter-toggle { 
-            font-size: 1rem; 
-            transition: transform 0.3s ease;
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
+            font-size: 1rem; transition: transform 0.3s;
+            width: 30px; height: 30px; line-height: 30px; text-align: center;
         }
-        .filter-toggle.rotated {
-            transform: rotate(180deg);
-        }
-        .filter-body { 
-            transition: all 0.3s ease; 
-            overflow: hidden;
-        }
-        .filter-body.collapsed { 
-            display: none; 
-        }
+        .filter-toggle.rotated { transform: rotate(180deg); }
+        .filter-body.collapsed { display: none; }
         
         .permission-instruction {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 10px;
-            padding: 12px;
-            margin: 8px 0;
-            color: #856404;
-            font-size: 0.8rem;
-            display: none;
-            line-height: 1.4;
+            background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px;
+            padding: 12px; margin: 8px 0; color: #856404; font-size: 0.8rem;
+            display: none; line-height: 1.4;
         }
-        body.dark-theme .permission-instruction {
-            background: #2a2a1a;
-            color: #ffc107;
-            border-color: #ffc107;
+        body.dark-theme .permission-instruction { background: #2a2a1a; color: #ffc107; border-color: #ffc107; }
+        
+        .phone-wrapper {
+            position: relative;
         }
-        .permission-instruction strong {
-            display: block;
-            margin-bottom: 6px;
+        .phone-prefix {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
             font-size: 0.85rem;
+            pointer-events: none;
         }
-        .permission-instruction .device-instruction {
-            margin: 4px 0;
-            padding-left: 12px;
+        .phone-input-styled {
+            padding-left: 35px !important;
+        }
+        .required-star {
+            color: #dc3545;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.75rem;
+            margin-top: 3px;
+            display: none;
         }
 
-        /* Мобильная версия */
         @media (max-width: 767px) {
-            .app-main {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                min-width: 100%;
-                height: 45%;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .map-area {
-                height: 55%;
-            }
-            
-            .filter-box {
-                max-height: 50%;
-            }
-            
-            .detail-overlay {
-                width: 90%;
-                left: 5%;
-                right: 5%;
-                bottom: 16px;
-                max-height: 50vh;
-            }
+            #searchPanel.active { flex-direction: column; }
+            .sidebar { width: 100%; min-width: 100%; height: 45%; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .map-area { height: 55%; }
+            .detail-overlay { width: 90%; left: 5%; right: 5%; bottom: 16px; max-height: 50vh; }
         }
         
-        /* Мобильный оптимизированный режим */
-        body.mobile-optimized .app-main {
-            flex-direction: column;
-        }
-        
-        body.mobile-optimized .sidebar {
-            width: 100%;
-            min-width: 100%;
-            height: 45%;
-            border-right: none;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        body.mobile-optimized .map-area {
-            height: 55%;
-        }
-        
-        body.mobile-optimized .filter-box {
-            max-height: 50%;
-        }
-        
-        body.mobile-optimized .detail-overlay {
-            width: 90%;
-            left: 5%;
-            right: 5%;
-            bottom: 16px;
-            max-height: 50vh;
-        }
-        
-        body.mobile-optimized .container {
-            margin: 0;
-            border-radius: 0;
-            padding: 0;
-        }
+        body.mobile-optimized #searchPanel.active { flex-direction: column; }
+        body.mobile-optimized .sidebar { width: 100%; min-width: 100%; height: 45%; border-right: none; border-bottom: 1px solid var(--border-color); }
+        body.mobile-optimized .map-area { height: 55%; width: 100%; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <!-- Шапка -->
     <div class="app-header">
         <div class="user-info">
             <div id="userStatus" style="flex:1;"></div>
             <button id="mobileAdaptBtn" class="mobile-adapt-btn">Мобильная версия</button>
             <button id="themeToggleBtn" class="theme-btn">Тёмная тема</button>
             <button id="showLoginBtn" class="login-btn">Вход для сотрудника</button>
-            <button id="logoutBtn" class="logout-btn" style="display: none;">Выйти</button>
+            <button id="logoutBtn" class="logout-btn">Выйти</button>
         </div>
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#searchPanel" type="button">Поиск работы</button>
-            </li>
-            <li class="nav-item" id="adminTabItem" style="display: none;">
-                <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#adminPanel" type="button">Администрирование</button>
-            </li>
-        </ul>
+    </div>
+    
+    <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="searchPanel">Поиск работы</button>
+        <button class="tab-btn" data-tab="adminPanel" id="adminTabBtn" style="display:none;">Администрирование</button>
     </div>
 
-    <!-- Основной контент -->
     <div class="app-main">
-        <div class="tab-content" id="mainTabContent">
-            <!-- Панель поиска -->
-            <div class="tab-pane fade show active" id="searchPanel">
-                <div class="sidebar">
-                    <div class="filter-box">
-                        <div class="filter-header" onclick="toggleFilters()">
-                            <h5>Параметры поиска</h5>
-                            <span class="filter-toggle" id="filterToggleIcon">▼</span>
-                        </div>
-                        <div class="filter-body" id="filterBody">
-                            <div class="mb-2">
-                                <label>Ключевые слова</label>
-                                <input type="text" id="searchKeyword" class="form-control" placeholder="Должность, компания">
-                            </div>
-                            <div class="row mb-2">
-                                <div class="col-6">
-                                    <label>Зарплата от (руб)</label>
-                                    <input type="number" id="salaryFrom" class="form-control" placeholder="20000">
-                                </div>
-                                <div class="col-6">
-                                    <label>Зарплата до (руб)</label>
-                                    <input type="number" id="salaryTo" class="form-control" placeholder="60000">
-                                </div>
-                            </div>
-                            <div class="mb-2">
-                                <label>Тип занятости</label>
-                                <select id="jobType" class="form-select">
-                                    <option value="">Любая</option>
-                                    <option value="full">Полная занятость</option>
-                                    <option value="part">Частичная занятость</option>
-                                    <option value="remote">Удалённая работа</option>
-                                </select>
-                            </div>
-                            <div class="mb-2">
-                                <label>Район</label>
-                                <select id="districtSelect" class="form-select">
-                                    <option value="">Любой район</option>
-                                    <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
-                                    <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
-                                </select>
-                            </div>
-                            <div class="filter-favorite form-check">
-                                <input type="checkbox" id="showFavoritesOnly" class="form-check-input">
-                                <label class="form-check-label">Показать только избранные</label>
-                            </div>
-                            <div class="address-start">
-                                <input type="text" id="startAddress" class="form-control" placeholder="Введите адрес отправления">
-                                <button id="setStartByAddressBtn" class="btn btn-success">Установить</button>
-                            </div>
-                            <div class="d-flex gap-2 mt-2">
-                                <button class="btn btn-secondary flex-fill" onclick="resetFilters()">Сбросить фильтры</button>
-                                <button id="locateMeBtn" class="btn loc-btn flex-fill">Моё местоположение</button>
-                            </div>
-                            <div id="permissionInstruction" class="permission-instruction"></div>
-                        </div>
-                        <hr class="my-2">
-                        <div id="routeInfo" class="small text-muted"></div>
-                        <div class="instruction">
-                            Маршрут: укажите откуда ехать (введите адрес, нажмите «Моё местоположение» или кликните на карте), затем кликните по вакансии и нажмите «Маршрут».
-                        </div>
+        <div id="searchPanel" class="tab-panel active">
+            <div class="sidebar">
+                <div class="filter-box">
+                    <div class="filter-header" onclick="toggleFilters()">
+                        <h5>Параметры поиска</h5>
+                        <span class="filter-toggle" id="filterToggleIcon">▼</span>
                     </div>
-                    <div class="vacancy-list" id="vacancyList"></div>
-                </div>
-                <div class="map-area">
-                    <div id="map"></div>
-                    <div id="vacancyDetail" class="detail-overlay">
-                        <button class="detail-close" onclick="closeDetailCard()">×</button>
-                        <div id="vacancyDetailContent"></div>
-                        <div class="mt-2">
-                            <button class="btn-close-card" onclick="closeDetailCard()">Закрыть</button>
+                    <div class="filter-body" id="filterBody">
+                        <div class="mb-2">
+                            <label>Ключевые слова</label>
+                            <input type="text" id="searchKeyword" class="form-control" placeholder="Должность, компания">
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Панель администратора -->
-            <div class="tab-pane fade" id="adminPanel">
-                <div class="admin-panel">
-                    <h5>Добавить новую вакансию</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-label">Название должности *</div>
-                            <input type="text" id="newTitle" class="form-control" placeholder="Программист">
-                            <div class="form-label">Компания *</div>
-                            <input type="text" id="newCompany" class="form-control" placeholder="ООО Ромашка">
-                            <div class="form-label">Контактный телефон</div>
-                            <input type="tel" id="newPhone" class="form-control phone-input" placeholder="+7 (___) ___-__-__" maxlength="18">
-                            <div class="error-message" id="phoneError"></div>
-                            <div class="form-label">Район *</div>
-                            <select id="newDistrict" class="form-select">
-                                <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
-                                <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
-                            </select>
+                        <div class="row mb-2">
+                            <div class="col-6"><label>Зарплата от (руб)</label><input type="number" id="salaryFrom" class="form-control" placeholder="20000"></div>
+                            <div class="col-6"><label>Зарплата до (руб)</label><input type="number" id="salaryTo" class="form-control" placeholder="60000"></div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-label">Зарплата от (руб) *</div>
-                            <input type="number" id="newSalaryMin" class="form-control" placeholder="30000">
-                            <div class="form-label">Зарплата до (руб) *</div>
-                            <input type="number" id="newSalaryMax" class="form-control" placeholder="50000">
-                            <div class="form-label">Тип занятости *</div>
-                            <select id="newType" class="form-select">
+                        <div class="mb-2">
+                            <label>Тип занятости</label>
+                            <select id="jobType" class="form-select">
+                                <option value="">Любая</option>
                                 <option value="full">Полная занятость</option>
                                 <option value="part">Частичная занятость</option>
                                 <option value="remote">Удалённая работа</option>
                             </select>
-                            <div class="form-label">График работы</div>
-                            <input type="text" id="newSchedule" class="form-control" placeholder="5/2, с 9:00 до 18:00">
-                            <div class="form-label">Требования к соискателю</div>
-                            <input type="text" id="newRequirements" class="form-control" placeholder="Опыт от 1 года, образование">
                         </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-12">
-                            <div class="form-label">Адрес места работы *</div>
-                            <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
-                            <div class="coord-hint">Введите адрес. Координаты определятся автоматически.</div>
+                        <div class="mb-2">
+                            <label>Район</label>
+                            <select id="districtSelect" class="form-select">
+                                <option value="">Любой район</option>
+                                <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
+                                <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-12">
-                            <div id="geocodeResult" class="geocode-result"></div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" id="showFavoritesOnly" class="form-check-input">
+                            <label class="form-check-label">Только избранные</label>
                         </div>
+                        <div class="address-start">
+                            <input type="text" id="startAddress" class="form-control" placeholder="Адрес отправления">
+                            <button id="setStartByAddressBtn" class="btn btn-success btn-sm">Установить</button>
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                            <button class="btn btn-secondary flex-fill btn-sm" onclick="resetFilters()">Сбросить</button>
+                            <button id="locateMeBtn" class="btn btn-warning flex-fill btn-sm">Моё местоположение</button>
+                        </div>
+                        <div id="permissionInstruction" class="permission-instruction"></div>
                     </div>
-                    <div id="adminMap" style="height: 250px; width: 100%; margin-top: 10px; display: none;"></div>
-                    <div class="mt-2">
-                        <div class="form-label">Описание вакансии</div>
-                        <textarea id="newDescription" class="form-control" rows="3" placeholder="Обязанности, условия работы..."></textarea>
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-success" id="addVacancyBtn">Добавить вакансию</button>
-                        <button class="btn btn-secondary" onclick="loadVacanciesFromDB()">Обновить список</button>
-                    </div>
-                    <hr>
-                    <h5>Список вакансий (управление)</h5>
-                    <div id="vacancyAdminList" class="vacancy-list" style="max-height: 400px;"></div>
+                    <hr class="my-2">
+                    <div id="routeInfo" class="small text-muted"></div>
+                    <div class="instruction">Маршрут: укажите точку отправления, затем выберите вакансию и нажмите «Маршрут».</div>
                 </div>
+                <div class="vacancy-list" id="vacancyList"></div>
+            </div>
+            <div class="map-area">
+                <div id="map"></div>
+                <div id="vacancyDetail" class="detail-overlay">
+                    <button class="detail-close" onclick="closeDetailCard()">×</button>
+                    <div id="vacancyDetailContent"></div>
+                    <div class="mt-2"><button class="btn-close-card" onclick="closeDetailCard()">Закрыть</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminPanel" class="tab-panel">
+            <div style="max-width:1200px;margin:0 auto;">
+                <h4>Добавить новую вакансию</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-label">Название должности <span class="required-star">*</span></div>
+                        <input type="text" id="newTitle" class="form-control" placeholder="Программист">
+                        <div class="form-label">Компания <span class="required-star">*</span></div>
+                        <input type="text" id="newCompany" class="form-control" placeholder="ООО Ромашка">
+                        <div class="form-label">Контактный телефон <span class="required-star">*</span></div>
+                        <div class="phone-wrapper">
+                            <span class="phone-prefix">+7</span>
+                            <input type="tel" id="newPhone" class="form-control phone-input-styled" placeholder="(___) ___-__-__" maxlength="15" inputmode="numeric">
+                        </div>
+                        <div class="error-message" id="newPhoneError">Введите 10 цифр номера телефона</div>
+                        <div class="form-label">Район <span class="required-star">*</span></div>
+                        <select id="newDistrict" class="form-select">
+                            <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
+                            <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-label">Зарплата от (руб) <span class="required-star">*</span></div>
+                        <input type="number" id="newSalaryMin" class="form-control" placeholder="30000">
+                        <div class="form-label">Зарплата до (руб) <span class="required-star">*</span></div>
+                        <input type="number" id="newSalaryMax" class="form-control" placeholder="50000">
+                        <div class="form-label">Тип занятости <span class="required-star">*</span></div>
+                        <select id="newType" class="form-select">
+                            <option value="full">Полная занятость</option>
+                            <option value="part">Частичная занятость</option>
+                            <option value="remote">Удалённая работа</option>
+                        </select>
+                        <div class="form-label">График работы</div>
+                        <input type="text" id="newSchedule" class="form-control" placeholder="5/2, с 9:00 до 18:00">
+                        <div class="form-label">Требования</div>
+                        <input type="text" id="newRequirements" class="form-control" placeholder="Опыт от 1 года">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-label">Адрес места работы <span class="required-star">*</span></div>
+                        <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
+                        <small>Введите адрес. Координаты определятся автоматически.</small>
+                    </div>
+                </div>
+                <div id="geocodeResult" class="mt-2"></div>
+                <div id="adminMap" style="height:200px;width:100%;margin-top:10px;display:none;"></div>
+                <div class="mt-2">
+                    <div class="form-label">Описание вакансии</div>
+                    <textarea id="newDescription" class="form-control" rows="3" placeholder="Обязанности, условия работы..."></textarea>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-success" id="addVacancyBtn">Добавить вакансию</button>
+                    <button class="btn btn-secondary" onclick="loadVacanciesFromDB()">Обновить список</button>
+                </div>
+                <hr>
+                <h4>Список вакансий</h4>
+                <div id="vacancyAdminList" style="max-height:400px;overflow-y:auto;"></div>
             </div>
         </div>
     </div>
@@ -598,7 +459,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="modalLoginError" class="alert alert-danger" style="display: none;"></div>
+                <div id="modalLoginError" class="alert alert-danger" style="display:none;"></div>
                 <input type="text" id="modalEmail" class="form-control mb-2" placeholder="Логин">
                 <input type="password" id="modalPassword" class="form-control mb-2" placeholder="Пароль">
                 <button class="btn btn-primary w-100" id="modalSignInBtn">Войти</button>
@@ -618,24 +479,28 @@
                 <input type="hidden" id="editFirebaseId">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-label">Название должности</div>
+                        <div class="form-label">Название должности <span class="required-star">*</span></div>
                         <input type="text" id="editTitle" class="form-control">
-                        <div class="form-label">Компания</div>
+                        <div class="form-label">Компания <span class="required-star">*</span></div>
                         <input type="text" id="editCompany" class="form-control">
-                        <div class="form-label">Телефон</div>
-                        <input type="tel" id="editPhone" class="form-control phone-input" maxlength="18">
-                        <div class="form-label">Район</div>
+                        <div class="form-label">Телефон <span class="required-star">*</span></div>
+                        <div class="phone-wrapper">
+                            <span class="phone-prefix">+7</span>
+                            <input type="tel" id="editPhone" class="form-control phone-input-styled" placeholder="(___) ___-__-__" maxlength="15" inputmode="numeric">
+                        </div>
+                        <div class="error-message" id="editPhoneError">Введите 10 цифр номера телефона</div>
+                        <div class="form-label">Район <span class="required-star">*</span></div>
                         <select id="editDistrict" class="form-select">
                             <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
                             <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-label">Зарплата от (руб)</div>
+                        <div class="form-label">Зарплата от (руб) <span class="required-star">*</span></div>
                         <input type="number" id="editSalaryMin" class="form-control">
-                        <div class="form-label">Зарплата до (руб)</div>
+                        <div class="form-label">Зарплата до (руб) <span class="required-star">*</span></div>
                         <input type="number" id="editSalaryMax" class="form-control">
-                        <div class="form-label">Тип занятости</div>
+                        <div class="form-label">Тип занятости <span class="required-star">*</span></div>
                         <select id="editType" class="form-select">
                             <option value="full">Полная занятость</option>
                             <option value="part">Частичная занятость</option>
@@ -649,24 +514,17 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-12">
-                        <div class="form-label">Адрес места работы *</div>
+                        <div class="form-label">Адрес места работы <span class="required-star">*</span></div>
                         <input type="text" id="editAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
-                        <div class="coord-hint">Измените адрес, и координаты определятся автоматически.</div>
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col-md-12">
-                        <div id="editGeocodeResult" class="geocode-result"></div>
-                    </div>
-                </div>
-                <div class="mt-2">
-                    <div class="form-label">Описание</div>
-                    <textarea id="editDescription" class="form-control" rows="3"></textarea>
-                </div>
+                <div id="editGeocodeResult" class="mt-2"></div>
+                <div id="editGeocodeMap" style="height:200px;width:100%;margin-top:10px;display:none;"></div>
+                <div class="mt-2"><div class="form-label">Описание</div><textarea id="editDescription" class="form-control" rows="3"></textarea></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" id="saveEditBtn">Сохранить изменения</button>
+                <button type="button" class="btn btn-primary" id="saveEditBtn">Сохранить</button>
             </div>
         </div>
     </div>
@@ -681,250 +539,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <script>
-    let editModal;
-    let editGeocodeTimeout = null;
-    let editFoundLat = null;
-    let editFoundLng = null;
-    let editTempMap = null;
-    let editTempMarker = null;
-    let isFilterCollapsed = false;
-
-    function phoneMask(input) {
-        let cursorPos = input.selectionStart;
-        let value = input.value.replace(/\D/g, '');
-        let formatted = '';
-        
-        if (value.length === 0) {
-            input.value = '';
-            input.classList.remove('invalid-field');
-            if (document.getElementById('phoneError')) document.getElementById('phoneError').innerHTML = '';
-            return { valid: true, value: '' };
-        }
-        
-        if (value.length > 10) value = value.slice(0, 10);
-        
-        formatted = '+7 (';
-        if (value.length >= 1) formatted += value.slice(0, 3);
-        else formatted += '';
-        formatted += ') ';
-        if (value.length >= 4) formatted += value.slice(3, 6);
-        if (value.length >= 7) formatted += '-' + value.slice(6, 8);
-        if (value.length >= 9) formatted += '-' + value.slice(8, 10);
-        
-        let oldLength = input.value.length;
-        input.value = formatted;
-        let newLength = input.value.length;
-        
-        if (oldLength > newLength) {
-            let newPos = cursorPos - (oldLength - newLength);
-            if (newPos < 0) newPos = 0;
-            input.setSelectionRange(newPos, newPos);
-        } else {
-            input.setSelectionRange(input.value.length, input.value.length);
-        }
-        
-        if (value.length === 10) {
-            input.classList.remove('invalid-field');
-            if (document.getElementById('phoneError')) document.getElementById('phoneError').innerHTML = '';
-            return { valid: true, value: value };
-        } else if (value.length > 0 && value.length < 10) {
-            input.classList.add('invalid-field');
-            if (document.getElementById('phoneError')) document.getElementById('phoneError').innerHTML = 'Введите 10 цифр';
-            return { valid: false, value: value };
-        }
-        return { valid: true, value: value };
-    }
-
-    function closeDetailCard() {
-        document.getElementById('vacancyDetail').style.display = 'none';
-    }
-
-    function initTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-theme');
-            document.getElementById('themeToggleBtn').textContent = 'Светлая тема';
-        } else {
-            document.body.classList.remove('dark-theme');
-            document.getElementById('themeToggleBtn').textContent = 'Тёмная тема';
-        }
-    }
-    
-    function toggleTheme() {
-        if (document.body.classList.contains('dark-theme')) {
-            document.body.classList.remove('dark-theme');
-            localStorage.setItem('theme', 'light');
-            document.getElementById('themeToggleBtn').textContent = 'Тёмная тема';
-        } else {
-            document.body.classList.add('dark-theme');
-            localStorage.setItem('theme', 'dark');
-            document.getElementById('themeToggleBtn').textContent = 'Светлая тема';
-        }
-        if (map) map.invalidateSize();
-    }
-
-    function toggleMobileOptimization() {
-        const btn = document.getElementById('mobileAdaptBtn');
-        if (!document.body.classList.contains('mobile-optimized')) {
-            document.body.classList.add('mobile-optimized');
-            btn.textContent = 'ПК версия';
-            btn.style.backgroundColor = '#dc3545';
-            showNotification('Включена мобильная версия');
-        } else {
-            document.body.classList.remove('mobile-optimized');
-            btn.textContent = 'Мобильная версия';
-            btn.style.backgroundColor = '#20c997';
-            showNotification('Включена ПК версия');
-        }
-        if (map) map.invalidateSize();
-    }
-
-    function toggleFilters() {
-        const body = document.getElementById('filterBody');
-        const icon = document.getElementById('filterToggleIcon');
-        
-        if (body.classList.contains('collapsed')) {
-            body.classList.remove('collapsed');
-            icon.classList.remove('rotated');
-            isFilterCollapsed = false;
-        } else {
-            body.classList.add('collapsed');
-            icon.classList.add('rotated');
-            isFilterCollapsed = true;
-        }
-    }
-
-    function autoGeocodeEdit(address) {
-        if (editGeocodeTimeout) clearTimeout(editGeocodeTimeout);
-        if (!address || address.trim() === '') {
-            document.getElementById('editGeocodeResult').innerHTML = '';
-            if (editTempMap) { editTempMap.destroy(); editTempMap = null; }
-            editFoundLat = null; editFoundLng = null;
-            return;
-        }
-        
-        let fullAddress = address.trim();
-        if (!fullAddress.toLowerCase().includes('сальск')) fullAddress += ', Сальск';
-        
-        editGeocodeTimeout = setTimeout(() => {
-            ymaps.geocode(fullAddress, { results: 1 })
-                .then(function(res) {
-                    const firstGeoObject = res.geoObjects.get(0);
-                    if (!firstGeoObject) {
-                        document.getElementById('editGeocodeResult').innerHTML = '<span class="text-danger">Адрес не найден. Проверьте правильность ввода.</span>';
-                        editFoundLat = null; editFoundLng = null;
-                        if (editTempMap) { editTempMap.destroy(); editTempMap = null; }
-                        return;
-                    }
-                    const coords = firstGeoObject.geometry.getCoordinates();
-                    editFoundLat = coords[0];
-                    editFoundLng = coords[1];
-                    document.getElementById('editGeocodeResult').innerHTML = '<span class="text-success">Найдено: ' + firstGeoObject.getAddressLine() + '</span>';
-                    
-                    if (!document.getElementById('editGeocodeMap')) {
-                        const newMapDiv = document.createElement('div');
-                        newMapDiv.id = 'editGeocodeMap';
-                        newMapDiv.style.height = '200px';
-                        newMapDiv.style.width = '100%';
-                        newMapDiv.style.marginTop = '10px';
-                        newMapDiv.style.display = 'block';
-                        document.getElementById('editGeocodeResult').after(newMapDiv);
-                    }
-                    if (editTempMap) { editTempMap.destroy(); }
-                    ymaps.ready(function() {
-                        editTempMap = new ymaps.Map('editGeocodeMap', {
-                            center: [editFoundLat, editFoundLng],
-                            zoom: 17,
-                            controls: ['zoomControl']
-                        });
-                        if (editTempMarker) { editTempMap.geoObjects.remove(editTempMarker); }
-                        editTempMarker = new ymaps.Placemark([editFoundLat, editFoundLng], { balloonContent: 'Адрес' }, { preset: 'islands#redCircleIcon' });
-                        editTempMap.geoObjects.add(editTempMarker);
-                    });
-                })
-                .catch(function(error) {
-                    document.getElementById('editGeocodeResult').innerHTML = '<span class="text-danger">Ошибка геокодирования</span>';
-                });
-        }, 800);
-    }
-
-    function editVacancy(firebaseId, vacancy) {
-        document.getElementById('editFirebaseId').value = firebaseId;
-        document.getElementById('editTitle').value = vacancy.title || '';
-        document.getElementById('editCompany').value = vacancy.company || '';
-        document.getElementById('editPhone').value = vacancy.phone ? '+7 (' + vacancy.phone.slice(0,3) + ') ' + vacancy.phone.slice(3,6) + '-' + vacancy.phone.slice(6,8) + '-' + vacancy.phone.slice(8,10) : '';
-        document.getElementById('editAddress').value = vacancy.address || '';
-        document.getElementById('editDistrict').value = vacancy.district || 'Центральный';
-        document.getElementById('editSalaryMin').value = vacancy.salary_min || 0;
-        document.getElementById('editSalaryMax').value = vacancy.salary_max || 0;
-        document.getElementById('editType').value = vacancy.type || 'full';
-        document.getElementById('editSchedule').value = vacancy.schedule || '';
-        document.getElementById('editRequirements').value = vacancy.requirements || '';
-        document.getElementById('editDescription').value = vacancy.description || '';
-        
-        editFoundLat = vacancy.lat;
-        editFoundLng = vacancy.lng;
-        
-        document.getElementById('editGeocodeResult').innerHTML = '';
-        if (editTempMap) { editTempMap.destroy(); editTempMap = null; }
-        
-        editModal.show();
-    }
-
-    function saveEditVacancy() {
-        const firebaseId = document.getElementById('editFirebaseId').value;
-        let phoneDigits = document.getElementById('editPhone').value.replace(/\D/g, '');
-        if (phoneDigits.length === 11 && phoneDigits.startsWith('7')) phoneDigits = phoneDigits.slice(1);
-        
-        let address = document.getElementById('editAddress').value.trim();
-        
-        if (address && (editFoundLat === null || editFoundLng === null)) {
-            showNotification('Дождитесь определения координат по адресу');
-            return;
-        }
-        
-        const updatedVacancy = {
-            title: document.getElementById('editTitle').value,
-            company: document.getElementById('editCompany').value,
-            phone: phoneDigits,
-            address: address,
-            district: document.getElementById('editDistrict').value,
-            salary_min: parseInt(document.getElementById('editSalaryMin').value) || 0,
-            salary_max: parseInt(document.getElementById('editSalaryMax').value) || 0,
-            salary_text: (document.getElementById('editSalaryMin').value || 0) + ' - ' + (document.getElementById('editSalaryMax').value || 0) + ' руб.',
-            type: document.getElementById('editType').value,
-            schedule: document.getElementById('editSchedule').value,
-            requirements: document.getElementById('editRequirements').value,
-            description: document.getElementById('editDescription').value,
-            lat: editFoundLat !== null ? editFoundLat : getLatByDistrict(document.getElementById('editDistrict').value),
-            lng: editFoundLng !== null ? editFoundLng : getLngByDistrict(document.getElementById('editDistrict').value),
-            updatedAt: new Date().toISOString()
-        };
-        
-        database.ref('vacancies/' + firebaseId).update(updatedVacancy).then(() => {
-            showNotification('Вакансия обновлена');
-            editModal.hide();
-            loadVacanciesFromDB();
-        }).catch(err => showNotification('Ошибка: ' + err.message));
-    }
-
-    function validatePhone(phone) {
-        const digits = phone.replace(/\D/g, '');
-        if (digits.length === 0) return { valid: true, value: '' };
-        if (digits.length !== 10) {
-            return { valid: false, message: 'Введите 10 цифр номера' };
-        }
-        return { valid: true, value: digits };
-    }
-
-    function addSalskToAddress(address) {
-        if (!address || address.trim() === '') return '';
-        const trimmed = address.trim();
-        if (trimmed.toLowerCase().includes('сальск')) return trimmed;
-        return trimmed + ', Сальск';
-    }
-
-    const firebaseConfig = {
+    // Инициализация Firebase
+    firebase.initializeApp({
         apiKey: "AIzaSyB15puFqVAopEu4bRKOx6qomODnypa7fnc",
         authDomain: "czn-salsk.firebaseapp.com",
         databaseURL: "https://czn-salsk-default-rtdb.europe-west1.firebasedatabase.app",
@@ -932,238 +548,217 @@
         storageBucket: "czn-salsk.firebasestorage.app",
         messagingSenderId: "399380131761",
         appId: "1:399380131761:web:812774f2918ce72f73d790"
-    };
-
-    firebase.initializeApp(firebaseConfig);
+    });
     const database = firebase.database();
     const auth = firebase.auth();
 
-    let map = null;
-    let userMarker = null;
-    let currentRoute = null;
+    let map = null, userMarker = null, currentRoute = null;
     let vacancies = [];
-    
-    let tempMap = null;
-    let tempMarker = null;
-    let foundLat = null;
-    let foundLng = null;
-    let geocodeTimeout = null;
-    
-    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    let tempMap = null, tempMarker = null, foundLat = null, foundLng = null, geocodeTimeout = null;
+    let editTempMap = null, editTempMarker = null, editFoundLat = null, editFoundLng = null, editGeocodeTimeout = null;
+    let editModal, loginModal;
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
-    function saveFavorites() {
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-    }
+    const darkMapStyle = [
+        {"featureType":"all","elementType":"geometry","stylers":[{"saturation":-100},{"lightness":-10}]},
+        {"featureType":"all","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":50}]},
+        {"featureType":"road","elementType":"geometry","stylers":[{"lightness":10},{"saturation":-100}]},
+        {"featureType":"water","elementType":"geometry","stylers":[{"lightness":-30}]}
+    ];
 
-    function isFavorite(vacancyId) {
-        return favorites.includes(vacancyId);
-    }
-
-    function addToFavorite(vacancyId) {
-        if (!favorites.includes(vacancyId)) {
-            favorites.push(vacancyId);
-            saveFavorites();
-            showNotification('Добавлено в избранное');
-            updateUI();
-            closeDetailCard();
+    // Функция фильтрации ввода телефона - только цифры
+    function filterPhoneInput(e) {
+        let value = e.target.value;
+        // Удаляем всё кроме цифр
+        let digits = value.replace(/\D/g, '');
+        // Ограничиваем 10 цифрами
+        if (digits.length > 10) digits = digits.slice(0, 10);
+        
+        // Форматируем
+        let formatted = '';
+        if (digits.length > 0) {
+            formatted += '(' + digits.substring(0, 3);
+        }
+        if (digits.length >= 4) {
+            formatted += ') ' + digits.substring(3, 6);
+        }
+        if (digits.length >= 7) {
+            formatted += '-' + digits.substring(6, 8);
+        }
+        if (digits.length >= 9) {
+            formatted += '-' + digits.substring(8, 10);
+        }
+        
+        e.target.value = formatted;
+        
+        // Скрываем ошибку если есть 10 цифр
+        const errorEl = document.getElementById(e.target.id + 'Error');
+        if (errorEl) {
+            if (digits.length === 10 || digits.length === 0) {
+                errorEl.style.display = 'none';
+            }
         }
     }
 
-    function removeFromFavorite(vacancyId) {
-        favorites = favorites.filter(id => id !== vacancyId);
-        saveFavorites();
-        showNotification('Удалено из избранного');
-        updateUI();
-        closeDetailCard();
+    // Валидация телефона
+    function validatePhone(phoneValue) {
+        const digits = phoneValue.replace(/\D/g, '');
+        return digits.length === 0 || digits.length === 10;
     }
 
-    function toggleFavorite(vacancyId) {
-        if (isFavorite(vacancyId)) removeFromFavorite(vacancyId);
-        else addToFavorite(vacancyId);
+    function getPhoneDigits(phoneValue) {
+        return phoneValue.replace(/\D/g, '');
     }
 
-    function showNotification(msg, isError = false) {
+    // Переключение вкладок
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('tab-btn')) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+            const panel = document.getElementById(e.target.dataset.tab);
+            if (panel) {
+                panel.classList.add('active');
+                if (e.target.dataset.tab === 'searchPanel' && map) map.invalidateSize();
+                if (e.target.dataset.tab === 'adminPanel') updateAdminList();
+            }
+        }
+    });
+
+    function closeDetailCard() { document.getElementById('vacancyDetail').style.display = 'none'; }
+
+    function initTheme() {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            document.getElementById('themeToggleBtn').textContent = 'Светлая тема';
+        }
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        document.getElementById('themeToggleBtn').textContent = isDark ? 'Светлая тема' : 'Тёмная тема';
+        updateMapTheme();
+        if (map) map.invalidateSize();
+    }
+
+    function updateMapTheme() {
+        const theme = document.body.classList.contains('dark-theme') ? darkMapStyle : 'default';
+        if (map) map.setOptions({ style: theme });
+        if (tempMap) tempMap.setOptions({ style: theme });
+        if (editTempMap) editTempMap.setOptions({ style: theme });
+    }
+
+    function toggleMobileOptimization() {
+        const btn = document.getElementById('mobileAdaptBtn');
+        document.body.classList.toggle('mobile-optimized');
+        btn.textContent = document.body.classList.contains('mobile-optimized') ? 'ПК версия' : 'Мобильная версия';
+        btn.style.backgroundColor = document.body.classList.contains('mobile-optimized') ? '#dc3545' : '#20c997';
+        if (map) map.invalidateSize();
+    }
+
+    function toggleFilters() {
+        document.getElementById('filterBody').classList.toggle('collapsed');
+        document.getElementById('filterToggleIcon').classList.toggle('rotated');
+    }
+
+    function showNotification(msg, isError) {
         const toast = document.getElementById('toastMessage');
         toast.textContent = msg;
+        toast.className = 'toast-notify' + (isError ? ' error' : '');
         toast.style.opacity = '1';
-        
-        if (isError) {
-            toast.classList.add('error');
-        } else {
-            toast.classList.remove('error');
-        }
-        
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.classList.remove('error'), 300);
-        }, 3000);
+        setTimeout(() => toast.style.opacity = '0', 3000);
     }
 
-    function setStartPoint(coords, source) {
+    function addSalsk(a) { return a && a.trim() && !a.toLowerCase().includes('сальск') ? a.trim()+', Сальск' : a; }
+
+    function setStartPoint(coords, src) {
         if (userMarker) map.geoObjects.remove(userMarker);
-        let balloonText = '';
-        if (source === 'geolocation') balloonText = 'Ваше местоположение';
-        else if (source === 'address') balloonText = 'Введённый адрес';
-        else balloonText = 'Отсюда';
-        userMarker = new ymaps.Placemark([coords.lat, coords.lng], { balloonContent: balloonText }, { preset: 'islands#greenDotIcon' });
+        userMarker = new ymaps.Placemark([coords.lat, coords.lng], {
+            balloonContent: src==='geo'?'Ваше местоположение':src==='addr'?'Введённый адрес':'Отсюда'
+        }, {preset:'islands#greenDotIcon'});
         map.geoObjects.add(userMarker);
         map.setCenter([coords.lat, coords.lng], 15);
-        showNotification('Точка отправления установлена.');
         document.getElementById('permissionInstruction').style.display = 'none';
+        showNotification('Точка отправления установлена');
     }
 
     function setStartByAddress() {
-        let address = document.getElementById('startAddress').value.trim();
-        if (!address) { showNotification('Введите адрес отправления', true); return; }
-        address = addSalskToAddress(address);
-        showNotification('Поиск адреса...');
-        ymaps.geocode(address, { results: 1 })
-            .then(function(res) {
-                const firstGeoObject = res.geoObjects.get(0);
-                if (!firstGeoObject) { showNotification('Адрес не найден', true); return; }
-                const coords = firstGeoObject.geometry.getCoordinates();
-                setStartPoint({ lat: coords[0], lng: coords[1] }, 'address');
-            })
-            .catch(function(error) { showNotification('Ошибка при поиске адреса', true); });
-    }
-
-    function getGeolocationInstruction() {
-        const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);
-        
-        if (isMobile) {
-            return '<strong>Доступ к геолокации запрещен</strong>' +
-                   '<div class="device-instruction"><strong>iPhone:</strong> Настройки → Конфиденциальность → Службы геолокации → Браузер → Разрешить</div>' +
-                   '<div class="device-instruction"><strong>Android:</strong> Настройки → Приложения → Браузер → Разрешения → Геолокация → Разрешить</div>' +
-                   '<div class="device-instruction" style="margin-top:8px;">После изменения настроек обновите страницу и попробуйте снова.</div>';
-        } else {
-            return '<strong>Доступ к геолокации запрещен</strong>' +
-                   '<div class="device-instruction"><strong>Google Chrome:</strong> Нажмите на значок замка слева от адресной строки → Разрешить для параметра "Геолокация"</div>' +
-                   '<div class="device-instruction"><strong>Яндекс Браузер:</strong> Нажмите на значок замка в адресной строке → Разрешить доступ к местоположению</div>' +
-                   '<div class="device-instruction"><strong>Firefox:</strong> Нажмите на значок замка в адресной строке → Разрешить доступ к местоположению</div>' +
-                   '<div class="device-instruction"><strong>Edge:</strong> Нажмите на значок замка в адресной строке → Разрешить для местоположения</div>' +
-                   '<div class="device-instruction" style="margin-top:8px;">После изменения настроек обновите страницу и попробуйте снова.</div>';
-        }
-    }
-
-    function showPermissionDeniedMessage() {
-        const instructionDiv = document.getElementById('permissionInstruction');
-        instructionDiv.innerHTML = getGeolocationInstruction();
-        instructionDiv.style.display = 'block';
-        
-        showNotification('Доступ к геолокации запрещен. Смотрите инструкцию ниже.', true);
-        
-        setTimeout(() => {
-            instructionDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
+        const a = document.getElementById('startAddress').value.trim();
+        if (!a) { showNotification('Введите адрес', true); return; }
+        ymaps.geocode(addSalsk(a), {results:1}).then(r => {
+            const g = r.geoObjects.get(0);
+            if (!g) { showNotification('Адрес не найден', true); return; }
+            const c = g.geometry.getCoordinates();
+            setStartPoint({lat:c[0],lng:c[1]}, 'addr');
+        }).catch(() => showNotification('Ошибка', true));
     }
 
     function locateUser() {
         document.getElementById('permissionInstruction').style.display = 'none';
-        
-        if (!navigator.geolocation) {
-            showNotification('Геолокация не поддерживается вашим браузером', true);
-            return;
-        }
-        
-        showNotification('Запрос геолокации...');
-        
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        };
-        
+        if (!navigator.geolocation) { showNotification('Геолокация не поддерживается', true); return; }
         navigator.geolocation.getCurrentPosition(
-            (position) => {
-                setStartPoint({ 
-                    lat: position.coords.latitude, 
-                    lng: position.coords.longitude 
-                }, 'geolocation');
-            },
-            (error) => {
-                if (error.code === error.PERMISSION_DENIED) {
-                    showPermissionDeniedMessage();
-                } else {
-                    let errorMessage = 'Не удалось определить местоположение. ';
-                    switch(error.code) {
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage += 'Информация о местоположении недоступна. Проверьте подключение к интернету.';
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage += 'Время ожидания истекло. Попробуйте еще раз.';
-                            break;
-                        default:
-                            errorMessage += 'Произошла неизвестная ошибка.';
-                            break;
-                    }
-                    showNotification(errorMessage, true);
+            p => setStartPoint({lat:p.coords.latitude, lng:p.coords.longitude}, 'geo'),
+            e => {
+                if (e.code === 1) {
+                    document.getElementById('permissionInstruction').innerHTML = 
+                        '<strong>Доступ запрещен</strong><div>Разрешите геолокацию в настройках браузера</div>';
+                    document.getElementById('permissionInstruction').style.display = 'block';
                 }
+                showNotification('Не удалось определить местоположение', true);
             },
-            options
+            {enableHighAccuracy:true, timeout:15000}
         );
     }
 
     function buildRoute(lat, lng) {
-        if (!userMarker) { showNotification('Сначала укажите точку отправления', true); return; }
-        const startCoords = userMarker.geometry.getCoordinates();
+        if (!userMarker) { showNotification('Укажите точку отправления', true); return; }
         if (currentRoute) map.geoObjects.remove(currentRoute);
-        ymaps.route([startCoords, [lat, lng]]).then(
-            function(route) {
-                currentRoute = route;
-                map.geoObjects.add(route);
-                document.getElementById('routeInfo').innerHTML = 'Маршрут: ' + route.getHumanLength() + ', время: ' + route.getHumanTime();
-                showNotification('Маршрут построен');
-                closeDetailCard();
-            },
-            function() { showNotification('Маршрут не построен', true); }
-        );
+        ymaps.route([userMarker.geometry.getCoordinates(), [lat, lng]]).then(r => {
+            currentRoute = r;
+            map.geoObjects.add(r);
+            document.getElementById('routeInfo').innerHTML = 'Маршрут: '+r.getHumanLength()+', время: '+r.getHumanTime();
+            showNotification('Маршрут построен');
+            closeDetailCard();
+        }).catch(() => showNotification('Маршрут не построен', true));
     }
 
-    function autoGeocode(address) {
+    function autoGeocode(addr) {
         if (geocodeTimeout) clearTimeout(geocodeTimeout);
-        if (!address || address.trim() === '') {
+        if (!addr || !addr.trim()) {
             document.getElementById('geocodeResult').innerHTML = '';
             if (tempMap) { tempMap.destroy(); tempMap = null; }
             document.getElementById('adminMap').style.display = 'none';
-            foundLat = null; foundLng = null;
+            foundLat = foundLng = null;
             return;
         }
-        let fullAddress = addSalskToAddress(address);
         geocodeTimeout = setTimeout(() => {
-            ymaps.geocode(fullAddress, { results: 1 })
-                .then(function(res) {
-                    const firstGeoObject = res.geoObjects.get(0);
-                    if (!firstGeoObject) {
-                        document.getElementById('geocodeResult').innerHTML = '<span class="text-danger">Адрес не найден</span>';
-                        foundLat = null; foundLng = null;
-                        if (tempMap) { tempMap.destroy(); tempMap = null; }
-                        document.getElementById('adminMap').style.display = 'none';
-                        return;
-                    }
-                    const coords = firstGeoObject.geometry.getCoordinates();
-                    foundLat = coords[0];
-                    foundLng = coords[1];
-                    document.getElementById('geocodeResult').innerHTML = '<span class="text-success">Найдено: ' + firstGeoObject.getAddressLine() + '</span>';
-                    const adminMapDiv = document.getElementById('adminMap');
-                    adminMapDiv.style.display = 'block';
-                    if (tempMap) { tempMap.destroy(); }
-                    ymaps.ready(function() {
-                        tempMap = new ymaps.Map('adminMap', { center: [foundLat, foundLng], zoom: 17, controls: ['zoomControl'] });
-                        if (tempMarker) { tempMap.geoObjects.remove(tempMarker); }
-                        tempMarker = new ymaps.Placemark([foundLat, foundLng], { balloonContent: 'Адрес' }, { preset: 'islands#redCircleIcon' });
-                        tempMap.geoObjects.add(tempMarker);
-                    });
-                })
-                .catch(function() { document.getElementById('geocodeResult').innerHTML = '<span class="text-danger">Ошибка геокодирования</span>'; });
+            ymaps.geocode(addSalsk(addr), {results:1}).then(r => {
+                const g = r.geoObjects.get(0);
+                if (!g) { document.getElementById('geocodeResult').innerHTML='<span class="text-danger">Не найдено</span>'; return; }
+                const c = g.geometry.getCoordinates();
+                foundLat=c[0]; foundLng=c[1];
+                document.getElementById('geocodeResult').innerHTML='<span class="text-success">Найдено: '+g.getAddressLine()+'</span>';
+                document.getElementById('adminMap').style.display='block';
+                if (tempMap) tempMap.destroy();
+                ymaps.ready(() => {
+                    tempMap = new ymaps.Map('adminMap', {center:[foundLat,foundLng],zoom:17,controls:['zoomControl']});
+                    if (tempMarker) tempMap.geoObjects.remove(tempMarker);
+                    tempMarker = new ymaps.Placemark([foundLat,foundLng], {}, {preset:'islands#redCircleIcon'});
+                    tempMap.geoObjects.add(tempMarker);
+                    updateMapTheme();
+                });
+            }).catch(() => document.getElementById('geocodeResult').innerHTML='<span class="text-danger">Ошибка</span>');
         }, 800);
     }
 
     function loadVacanciesFromDB() {
-        database.ref('vacancies').on('value', snapshot => {
-            const data = snapshot.val();
-            vacancies = data ? Object.entries(data).map(([id, v]) => ({ firebaseId: id, ...v })) : [];
+        database.ref('vacancies').on('value', s => {
+            const d = s.val();
+            vacancies = d ? Object.entries(d).map(([id,v]) => ({firebaseId:id, ...v})) : [];
             updateUI();
-            if (document.getElementById('adminPanel')?.classList.contains('active')) updateAdminList();
+            updateAdminList();
         });
     }
 
@@ -1171,194 +766,284 @@
         if (!auth.currentUser) { showNotification('Требуется авторизация', true); return; }
         const title = document.getElementById('newTitle').value.trim();
         const company = document.getElementById('newCompany').value.trim();
-        let address = document.getElementById('newAddress').value.trim();
-        let phone = document.getElementById('newPhone').value.trim();
+        const address = document.getElementById('newAddress').value.trim();
+        const phoneDigits = getPhoneDigits(document.getElementById('newPhone').value);
         
-        const phoneValidation = validatePhone(phone);
-        if (!phoneValidation.valid) { 
-            showNotification(phoneValidation.message, true);
-            document.getElementById('newPhone').classList.add('invalid-field');
-            return; 
+        // Проверка телефона
+        if (!phoneDigits || phoneDigits.length !== 10) {
+            document.getElementById('newPhoneError').style.display = 'block';
+            document.getElementById('newPhone').style.borderColor = '#dc3545';
+            showNotification('Введите 10 цифр номера телефона', true);
+            return;
         }
-        document.getElementById('newPhone').classList.remove('invalid-field');
+        document.getElementById('newPhoneError').style.display = 'none';
+        document.getElementById('newPhone').style.borderColor = '';
         
         if (!title || !company) { showNotification('Заполните название и компанию', true); return; }
         if (!address) { showNotification('Введите адрес', true); return; }
-        address = addSalskToAddress(address);
-        if (foundLat === null || foundLng === null) { showNotification('Дождитесь определения координат', true); return; }
-        const district = document.getElementById('newDistrict').value;
-        const newVac = {
-            title, company, phone: phoneValidation.value, address, district,
-            salary_min: parseInt(document.getElementById('newSalaryMin').value) || 0,
-            salary_max: parseInt(document.getElementById('newSalaryMax').value) || 0,
-            salary_text: (document.getElementById('newSalaryMin').value || 0) + ' - ' + (document.getElementById('newSalaryMax').value || 0) + ' руб.',
+        if (foundLat===null || foundLng===null) { showNotification('Дождитесь определения координат', true); return; }
+        
+        database.ref('vacancies').push({
+            title, company, phone: phoneDigits, address: addSalsk(address),
+            district: document.getElementById('newDistrict').value,
+            salary_min: parseInt(document.getElementById('newSalaryMin').value)||0,
+            salary_max: parseInt(document.getElementById('newSalaryMax').value)||0,
+            salary_text: (document.getElementById('newSalaryMin').value||0)+' - '+(document.getElementById('newSalaryMax').value||0)+' руб.',
             type: document.getElementById('newType').value,
             schedule: document.getElementById('newSchedule').value,
             requirements: document.getElementById('newRequirements').value,
             description: document.getElementById('newDescription').value,
             lat: foundLat, lng: foundLng,
-            createdBy: auth.currentUser.email, createdAt: new Date().toISOString()
-        };
-        database.ref('vacancies').push(newVac).then(() => {
+            createdBy: auth.currentUser.email,
+            createdAt: new Date().toISOString()
+        }).then(() => {
             showNotification('Вакансия добавлена');
-            ['newTitle','newCompany','newPhone','newSalaryMin','newSalaryMax','newSchedule','newRequirements','newDescription','newAddress'].forEach(id => document.getElementById(id).value = '');
-            foundLat = null; foundLng = null; document.getElementById('geocodeResult').innerHTML = '';
-            const adminMapDiv = document.getElementById('adminMap'); adminMapDiv.style.display = 'none';
-            if (tempMap) { tempMap.destroy(); tempMap = null; }
-        }).catch(err => showNotification('Ошибка: ' + err.message, true));
+            ['newTitle','newCompany','newPhone','newSalaryMin','newSalaryMax','newSchedule','newRequirements','newDescription','newAddress'].forEach(id => document.getElementById(id).value='');
+            foundLat=foundLng=null;
+            document.getElementById('geocodeResult').innerHTML='';
+            document.getElementById('adminMap').style.display='none';
+            if (tempMap) { tempMap.destroy(); tempMap=null; }
+        }).catch(e => showNotification('Ошибка: '+e.message, true));
     }
 
-    function deleteVacancy(firebaseId) {
+    function deleteVacancy(fid) {
         if (!auth.currentUser) { showNotification('Требуется авторизация', true); return; }
-        if (confirm('Удалить вакансию?')) database.ref('vacancies/' + firebaseId).remove().then(() => showNotification('Удалено'));
-    }
-
-    function getLatByDistrict(d) {
-        const coords = { 'Заречный':46.462, 'Низовский':46.455, 'Кучур-да':46.485, 'Центральный':46.4775, 'Капустино':46.550, 'Промышленный':46.545, 'Новосальск':46.524 };
-        return coords[d] || 46.475;
-    }
-    function getLngByDistrict(d) {
-        const coords = { 'Заречный':41.517, 'Низовский':41.507, 'Кучур-да':41.496, 'Центральный':41.543, 'Капустино':41.550, 'Промышленный':41.545, 'Новосальск':41.524 };
-        return coords[d] || 41.541;
+        if (confirm('Удалить вакансию?')) database.ref('vacancies/'+fid).remove().then(() => showNotification('Удалено'));
     }
 
     function updateAdminList() {
-        const container = document.getElementById('vacancyAdminList');
-        if (!container) return;
-        if (!vacancies.length) { container.innerHTML = '<div class="text-muted">Нет вакансий</div>'; return; }
-        let html = '';
+        const c = document.getElementById('vacancyAdminList');
+        if (!c) return;
+        if (!vacancies.length) { c.innerHTML = '<div class="text-muted p-3">Нет вакансий</div>'; return; }
+        let h = '';
         vacancies.forEach(v => {
-            html += '<div class="vacancy-card" style="border-left-color:#dc3545;">' +
-                        '<strong>' + v.title + '</strong><br>' + v.company + '<br>' + v.salary_text + '<br>' + v.district +
-                        '<div class="mt-2">' +
-                            '<button class="btn btn-info btn-sm btn-edit" onclick="editVacancy(\'' + v.firebaseId + '\', ' + JSON.stringify(v).replace(/"/g, '&quot;') + ')">Редактировать</button>' +
-                            '<button class="btn btn-danger btn-sm" onclick="deleteVacancy(\'' + v.firebaseId + '\')">Удалить</button>' +
-                        '</div>' +
-                    '</div>';
+            h += '<div class="vacancy-card" style="border-left-color:#dc3545;position:relative;">'+
+                '<strong>'+v.title+'</strong><br>'+v.company+'<br>'+v.salary_text+'<br>'+v.district+
+                '<div class="mt-2">'+
+                '<button class="btn-edit" onclick="editVacancy(\''+v.firebaseId+'\')">Редактировать</button>'+
+                '<button class="btn-delete" onclick="deleteVacancy(\''+v.firebaseId+'\')">Удалить</button>'+
+                '</div></div>';
         });
-        container.innerHTML = html;
+        c.innerHTML = h;
+    }
+
+    function editVacancy(fid) {
+        const v = vacancies.find(x => x.firebaseId === fid);
+        if (!v) { showNotification('Вакансия не найдена', true); return; }
+        document.getElementById('editFirebaseId').value = fid;
+        document.getElementById('editTitle').value = v.title || '';
+        document.getElementById('editCompany').value = v.company || '';
+        // Форматируем телефон для отображения
+        if (v.phone && v.phone.length === 10) {
+            document.getElementById('editPhone').value = '(' + v.phone.slice(0,3) + ') ' + v.phone.slice(3,6) + '-' + v.phone.slice(6,8) + '-' + v.phone.slice(8,10);
+        } else {
+            document.getElementById('editPhone').value = v.phone || '';
+        }
+        document.getElementById('editAddress').value = v.address || '';
+        document.getElementById('editDistrict').value = v.district || 'Центральный';
+        document.getElementById('editSalaryMin').value = v.salary_min || 0;
+        document.getElementById('editSalaryMax').value = v.salary_max || 0;
+        document.getElementById('editType').value = v.type || 'full';
+        document.getElementById('editSchedule').value = v.schedule || '';
+        document.getElementById('editRequirements').value = v.requirements || '';
+        document.getElementById('editDescription').value = v.description || '';
+        editFoundLat = v.lat; editFoundLng = v.lng;
+        document.getElementById('editGeocodeResult').innerHTML = '';
+        document.getElementById('editGeocodeMap').style.display = 'none';
+        document.getElementById('editPhoneError').style.display = 'none';
+        document.getElementById('editPhone').style.borderColor = '';
+        if (editTempMap) { editTempMap.destroy(); editTempMap = null; }
+        editModal.show();
+    }
+
+    function saveEditVacancy() {
+        const fid = document.getElementById('editFirebaseId').value;
+        const phoneDigits = getPhoneDigits(document.getElementById('editPhone').value);
+        
+        // Проверка телефона
+        if (!phoneDigits || phoneDigits.length !== 10) {
+            document.getElementById('editPhoneError').style.display = 'block';
+            document.getElementById('editPhone').style.borderColor = '#dc3545';
+            showNotification('Введите 10 цифр номера телефона', true);
+            return;
+        }
+        document.getElementById('editPhoneError').style.display = 'none';
+        document.getElementById('editPhone').style.borderColor = '';
+        
+        const address = document.getElementById('editAddress').value.trim();
+        if (address && (editFoundLat===null || editFoundLng===null)) {
+            showNotification('Дождитесь определения координат', true); return;
+        }
+        const coords = {
+            'Заречный':[46.462,41.517], 'Низовский':[46.455,41.507], 'Кучур-да':[46.485,41.496],
+            'Центральный':[46.4775,41.543], 'Капустино':[46.550,41.550], 'Промышленный':[46.545,41.545], 'Новосальск':[46.524,41.524]
+        };
+        const def = coords[document.getElementById('editDistrict').value] || [46.475,41.541];
+        
+        database.ref('vacancies/'+fid).update({
+            title: document.getElementById('editTitle').value,
+            company: document.getElementById('editCompany').value,
+            phone: phoneDigits,
+            address,
+            district: document.getElementById('editDistrict').value,
+            salary_min: parseInt(document.getElementById('editSalaryMin').value)||0,
+            salary_max: parseInt(document.getElementById('editSalaryMax').value)||0,
+            salary_text: (document.getElementById('editSalaryMin').value||0)+' - '+(document.getElementById('editSalaryMax').value||0)+' руб.',
+            type: document.getElementById('editType').value,
+            schedule: document.getElementById('editSchedule').value,
+            requirements: document.getElementById('editRequirements').value,
+            description: document.getElementById('editDescription').value,
+            lat: editFoundLat!==null ? editFoundLat : def[0],
+            lng: editFoundLng!==null ? editFoundLng : def[1],
+            updatedAt: new Date().toISOString()
+        }).then(() => {
+            showNotification('Вакансия обновлена');
+            editModal.hide();
+            loadVacanciesFromDB();
+        }).catch(e => showNotification('Ошибка: '+e.message, true));
     }
 
     function filterVacancies() {
-        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
-        const from = parseInt(document.getElementById('salaryFrom').value) || 0;
-        const to = parseInt(document.getElementById('salaryTo').value) || Infinity;
+        const kw = document.getElementById('searchKeyword').value.trim().toLowerCase();
+        const from = parseInt(document.getElementById('salaryFrom').value)||0;
+        const to = parseInt(document.getElementById('salaryTo').value)||Infinity;
         const type = document.getElementById('jobType').value;
         const distr = document.getElementById('districtSelect').value;
         const onlyFav = document.getElementById('showFavoritesOnly').checked;
         return vacancies.filter(v => {
-            if (keyword && !v.title.toLowerCase().includes(keyword) && !v.company.toLowerCase().includes(keyword)) return false;
-            if (!(v.salary_max >= from && v.salary_min <= to)) return false;
-            if (type && v.type !== type) return false;
-            if (distr && v.district !== distr) return false;
-            if (onlyFav && !isFavorite(v.firebaseId)) return false;
+            if (kw && !v.title.toLowerCase().includes(kw) && !v.company.toLowerCase().includes(kw)) return false;
+            if (!(v.salary_max>=from && v.salary_min<=to)) return false;
+            if (type && v.type!==type) return false;
+            if (distr && v.district!==distr) return false;
+            if (onlyFav && !favorites.includes(v.firebaseId)) return false;
             return true;
         });
     }
 
     function updateUI() {
         const filtered = filterVacancies();
-        const listDiv = document.getElementById('vacancyList');
-        if (!filtered.length) listDiv.innerHTML = '<div class="alert alert-warning">Ничего не найдено</div>';
+        const list = document.getElementById('vacancyList');
+        if (!filtered.length) { list.innerHTML = '<div class="alert alert-warning">Ничего не найдено</div>'; }
         else {
-            let html = '<h5>Найдено: ' + filtered.length + '</h5>';
+            let h = '<h5>Найдено: '+filtered.length+'</h5>';
             filtered.forEach(v => {
-                const favClass = isFavorite(v.firebaseId) ? 'favorite' : '';
-                const starHtml = isFavorite(v.firebaseId) ? '<span class="favorite-star">★</span>' : '';
-                html += '<div class="vacancy-card ' + favClass + '" onclick=\'showDetails(' + JSON.stringify(v) + ')\'>' +
-                            starHtml + '<strong>' + v.title + '</strong><br>' + v.company + '<br>' + v.salary_text + '<br>' + v.district +
-                        '</div>';
+                const fav = favorites.includes(v.firebaseId);
+                h += '<div class="vacancy-card'+(fav?' favorite':'')+'" onclick="showDetails(\''+v.firebaseId+'\')" style="position:relative;">'+
+                    (fav?'<span class="favorite-star">★</span>':'')+
+                    '<strong>'+v.title+'</strong><br>'+v.company+'<br>'+v.salary_text+'<br>'+v.district+'</div>';
             });
-            listDiv.innerHTML = html;
+            list.innerHTML = h;
         }
         if (map) {
-            const oldMarker = userMarker;
+            const old = userMarker;
             map.geoObjects.removeAll();
-            if (oldMarker) { userMarker = oldMarker; map.geoObjects.add(userMarker); }
+            if (old) { userMarker=old; map.geoObjects.add(userMarker); }
             filtered.forEach(v => {
                 if (v.lat && v.lng) {
-                    const pm = new ymaps.Placemark([v.lat, v.lng], {
+                    const pm = new ymaps.Placemark([v.lat,v.lng], {
                         balloonContentHeader: v.title,
-                        balloonContentBody: v.company + '<br>' + v.salary_text + '<br>' + v.district,
-                        balloonContentFooter: '<button onclick="buildRoute(' + v.lat + ',' + v.lng + ')">Маршрут</button>'
-                    }, { preset: 'islands#blueCircleIcon' });
-                    pm.events.add('click', () => showDetails(v));
+                        balloonContentBody: v.company+'<br>'+v.salary_text+'<br>'+v.district,
+                        balloonContentFooter: '<button onclick="buildRoute('+v.lat+','+v.lng+')">Маршрут</button>'
+                    }, {preset:'islands#blueCircleIcon'});
+                    pm.events.add('click', () => showDetails(v.firebaseId));
                     map.geoObjects.add(pm);
                 }
             });
         }
     }
 
-    function showDetails(v) {
-        const detailDiv = document.getElementById('vacancyDetail');
-        const contentDiv = document.getElementById('vacancyDetailContent');
-        let typeText = v.type === 'full' ? 'Полная занятость' : (v.type === 'part' ? 'Частичная занятость' : 'Удалённая работа');
-        let phoneStr = v.phone ? '+7 ' + v.phone.slice(0,3) + ' ' + v.phone.slice(3,6) + '-' + v.phone.slice(6,8) + '-' + v.phone.slice(8,10) : '';
-        const isFav = isFavorite(v.firebaseId);
-        const favButtonHtml = isFav ? 
-            '<button class="btn-favorite-remove" onclick="toggleFavorite(\'' + v.firebaseId + '\')">Удалить из избранного</button>' :
-            '<button class="btn-favorite" onclick="toggleFavorite(\'' + v.firebaseId + '\')">В избранное</button>';
-        contentDiv.innerHTML = '<h6>' + v.title + '</h6>' +
-            '<p><strong>' + v.company + '</strong></p>' +
-            (phoneStr ? '<p><strong>Телефон:</strong> ' + phoneStr + '</p>' : '') +
-            (v.address ? '<p><strong>Адрес:</strong> ' + v.address + '</p>' : '') +
-            '<p><strong>Район:</strong> ' + v.district + '</p>' +
-            '<p><strong>Зарплата:</strong> ' + v.salary_text + '</p>' +
-            '<p><strong>Тип занятости:</strong> ' + typeText + '</p>' +
-            (v.schedule ? '<p><strong>График:</strong> ' + v.schedule + '</p>' : '') +
-            (v.requirements ? '<p><strong>Требования:</strong> ' + v.requirements + '</p>' : '') +
-            '<p><strong>Описание:</strong><br>' + (v.description || 'Не указано') + '</p><hr>' +
-            '<button class="btn-route" onclick="buildRoute(' + v.lat + ',' + v.lng + ')">Маршрут</button>' +
-            favButtonHtml +
-            '<button class="btn-share" onclick="shareVacancy(' + JSON.stringify(v).replace(/"/g,'&quot;') + ')">Поделиться</button>' +
-            '<button class="btn-share btn-copy-all" onclick="copyFullVacancy(' + JSON.stringify(v).replace(/"/g,'&quot;') + ')">Копировать всё</button>';
-        detailDiv.style.display = 'block';
+    function showDetails(fid) {
+        const v = vacancies.find(x => x.firebaseId === fid);
+        if (!v) return;
+        const div = document.getElementById('vacancyDetail');
+        const cnt = document.getElementById('vacancyDetailContent');
+        const typeText = v.type==='full'?'Полная':v.type==='part'?'Частичная':'Удалённая';
+        const phone = v.phone ? '+7 '+v.phone.slice(0,3)+' '+v.phone.slice(3,6)+'-'+v.phone.slice(6,8)+'-'+v.phone.slice(8,10) : '';
+        const isFav = favorites.includes(v.firebaseId);
+        cnt.innerHTML = '<h6>'+v.title+'</h6><p><strong>'+v.company+'</strong></p>'+
+            (phone?'<p><strong>Телефон:</strong> '+phone+'</p>':'')+
+            (v.address?'<p><strong>Адрес:</strong> '+v.address+'</p>':'')+
+            '<p><strong>Район:</strong> '+v.district+'</p>'+
+            '<p><strong>Зарплата:</strong> '+v.salary_text+'</p>'+
+            '<p><strong>Тип занятости:</strong> '+typeText+'</p>'+
+            (v.schedule?'<p><strong>График:</strong> '+v.schedule+'</p>':'')+
+            (v.requirements?'<p><strong>Требования:</strong> '+v.requirements+'</p>':'')+
+            '<p><strong>Описание:</strong><br>'+(v.description||'Не указано')+'</p><hr>'+
+            '<button class="btn-route" onclick="buildRoute('+v.lat+','+v.lng+')">Маршрут</button>'+
+            (isFav?'<button class="btn-fav-remove" onclick="toggleFav(\''+v.firebaseId+'\')">Удалить из избранного</button>':
+                     '<button class="btn-fav" onclick="toggleFav(\''+v.firebaseId+'\')">В избранное</button>')+
+            '<button class="btn-share" onclick="shareVacancy(\''+v.firebaseId+'\')">Поделиться</button>'+
+            '<button class="btn-copy-all" onclick="copyFull(\''+v.firebaseId+'\')">Копировать всё</button>';
+        div.style.display = 'block';
     }
 
-    function copyFullVacancy(v) {
-        let typeText = v.type === 'full' ? 'Полная занятость' : (v.type === 'part' ? 'Частичная занятость' : 'Удалённая работа');
-        let phoneStr = v.phone ? '+7 ' + v.phone.slice(0,3) + ' ' + v.phone.slice(3,6) + '-' + v.phone.slice(6,8) + '-' + v.phone.slice(8,10) : '';
-        let text = 'ВАКАНСИЯ\nДолжность: ' + v.title + '\nКомпания: ' + v.company + (phoneStr ? '\nТелефон: ' + phoneStr : '') + (v.address ? '\nАдрес: ' + v.address : '') + '\nРайон: ' + v.district + '\nЗарплата: ' + v.salary_text + '\nТип занятости: ' + typeText + (v.schedule ? '\nГрафик: ' + v.schedule : '') + (v.requirements ? '\nТребования: ' + v.requirements : '') + (v.description ? '\nОписание: ' + v.description : '') + '\n\nЦентр занятости населения г. Сальск';
-        navigator.clipboard.writeText(text).then(() => showNotification('Полная информация скопирована'));
-        closeDetailCard();
+    function toggleFav(fid) {
+        if (favorites.includes(fid)) favorites = favorites.filter(x => x!==fid);
+        else favorites.push(fid);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        updateUI();
+        showDetails(fid);
     }
 
-    function shareVacancy(v) {
-        const text = v.title + ' в ' + v.company + '\nЗарплата: ' + v.salary_text + '\nРайон: ' + v.district + '\n' + (v.description || '');
-        navigator.clipboard.writeText(text).then(() => showNotification('Скопировано'));
-        closeDetailCard();
+    function copyFull(fid) {
+        const v = vacancies.find(x => x.firebaseId === fid);
+        if (!v) return;
+        const typeText = v.type==='full'?'Полная':v.type==='part'?'Частичная':'Удалённая';
+        const phone = v.phone ? '+7 '+v.phone.slice(0,3)+' '+v.phone.slice(3,6)+'-'+v.phone.slice(6,8)+'-'+v.phone.slice(8,10) : '';
+        const t = 'ВАКАНСИЯ\nДолжность: '+v.title+'\nКомпания: '+v.company+
+            (phone?'\nТелефон: '+phone:'')+(v.address?'\nАдрес: '+v.address:'')+
+            '\nРайон: '+v.district+'\nЗарплата: '+v.salary_text+'\nТип: '+typeText+
+            (v.schedule?'\nГрафик: '+v.schedule:'')+(v.requirements?'\nТребования: '+v.requirements:'')+
+            (v.description?'\nОписание: '+v.description:'')+'\n\nЦЗН г. Сальск';
+        navigator.clipboard.writeText(t).then(() => { showNotification('Скопировано'); closeDetailCard(); });
+    }
+
+    function shareVacancy(fid) {
+        const v = vacancies.find(x => x.firebaseId === fid);
+        if (!v) return;
+        navigator.clipboard.writeText(v.title+' в '+v.company+'\nЗарплата: '+v.salary_text+'\nРайон: '+v.district)
+            .then(() => { showNotification('Скопировано'); closeDetailCard(); });
     }
 
     function resetFilters() {
-        document.getElementById('searchKeyword').value = '';
-        document.getElementById('salaryFrom').value = '';
-        document.getElementById('salaryTo').value = '';
-        document.getElementById('jobType').value = '';
-        document.getElementById('districtSelect').value = '';
-        document.getElementById('showFavoritesOnly').checked = false;
+        ['searchKeyword','salaryFrom','salaryTo'].forEach(id => document.getElementById(id).value='');
+        document.getElementById('jobType').value='';
+        document.getElementById('districtSelect').value='';
+        document.getElementById('showFavoritesOnly').checked=false;
         updateUI();
-        document.getElementById('routeInfo').innerHTML = '';
-        if (currentRoute) { map.geoObjects.remove(currentRoute); currentRoute = null; }
+        document.getElementById('routeInfo').innerHTML='';
+        if (currentRoute) { map.geoObjects.remove(currentRoute); currentRoute=null; }
     }
 
     function initMap() {
         ymaps.ready(() => {
-            map = new ymaps.Map("map", { center: [46.475,41.541], zoom: 13, controls: ['zoomControl'] });
-            map.events.add('click', (e) => { const coords = e.get('coords'); setStartPoint({ lat: coords[0], lng: coords[1] }, 'click'); });
+            map = new ymaps.Map("map", {center:[46.475,41.541],zoom:13,controls:['zoomControl']});
+            map.events.add('click', e => { const c=e.get('coords'); setStartPoint({lat:c[0],lng:c[1]},'click'); });
+            updateMapTheme();
             updateUI();
         });
     }
 
-    let loginModal;
+    function updateAuthUI(user) {
+        document.getElementById('showLoginBtn').style.display = user ? 'none' : 'inline-block';
+        document.getElementById('logoutBtn').style.display = user ? 'inline-block' : 'none';
+        document.getElementById('adminTabBtn').style.display = user ? 'inline-block' : 'none';
+        if (user) {
+            document.getElementById('userStatus').innerHTML = 'Сотрудник: <strong>'+user.email+'</strong>';
+            updateAdminList();
+        } else {
+            document.getElementById('userStatus').innerHTML = '';
+            if (document.getElementById('adminPanel').classList.contains('active')) {
+                document.querySelector('[data-tab="searchPanel"]').click();
+            }
+        }
+    }
+
     window.addEventListener('load', () => {
         initTheme();
-        
-        const filterBody = document.getElementById('filterBody');
-        const filterIcon = document.getElementById('filterToggleIcon');
         if (window.innerWidth <= 768) {
-            filterBody.classList.add('collapsed');
-            filterIcon.classList.add('rotated');
-            isFilterCollapsed = true;
+            document.getElementById('filterBody').classList.add('collapsed');
+            document.getElementById('filterToggleIcon').classList.add('rotated');
         }
         
         editModal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -1371,77 +1056,99 @@
         document.getElementById('mobileAdaptBtn').addEventListener('click', toggleMobileOptimization);
         document.getElementById('setStartByAddressBtn').addEventListener('click', setStartByAddress);
         document.getElementById('locateMeBtn').addEventListener('click', locateUser);
-        document.getElementById('showFavoritesOnly').addEventListener('change', () => updateUI());
+        document.getElementById('showFavoritesOnly').addEventListener('change', updateUI);
         document.getElementById('saveEditBtn').addEventListener('click', saveEditVacancy);
+        document.getElementById('addVacancyBtn').addEventListener('click', addVacancy);
+        document.getElementById('newAddress').addEventListener('input', e => autoGeocode(e.target.value));
         
-        const addressInput = document.getElementById('newAddress');
-        addressInput.addEventListener('input', (e) => autoGeocode(e.target.value));
+        // Обработчики для полей телефона
+        document.getElementById('newPhone').addEventListener('input', filterPhoneInput);
+        document.getElementById('editPhone').addEventListener('input', filterPhoneInput);
         
-        const phoneInput = document.getElementById('newPhone');
-        phoneInput.addEventListener('input', function(e) { phoneMask(this); });
-        phoneInput.addEventListener('blur', function(e) { 
-            const result = phoneMask(this);
-            if (result && !result.valid) {
-                this.classList.add('invalid-field');
-            }
+        // Скрываем ошибку при фокусе
+        document.getElementById('newPhone').addEventListener('focus', function() {
+            document.getElementById('newPhoneError').style.display = 'none';
+            this.style.borderColor = '';
+        });
+        document.getElementById('editPhone').addEventListener('focus', function() {
+            document.getElementById('editPhoneError').style.display = 'none';
+            this.style.borderColor = '';
         });
         
-        const editPhoneInput = document.getElementById('editPhone');
-        if (editPhoneInput) {
-            editPhoneInput.addEventListener('input', function(e) { phoneMask(this); });
-        }
+        document.getElementById('editAddress').addEventListener('input', e => {
+            if (editGeocodeTimeout) clearTimeout(editGeocodeTimeout);
+            const a = e.target.value.trim();
+            if (!a) {
+                document.getElementById('editGeocodeResult').innerHTML = '';
+                document.getElementById('editGeocodeMap').style.display = 'none';
+                editFoundLat = editFoundLng = null;
+                return;
+            }
+            editGeocodeTimeout = setTimeout(() => {
+                ymaps.geocode(addSalsk(a), {results:1}).then(r => {
+                    const g = r.geoObjects.get(0);
+                    if (!g) { document.getElementById('editGeocodeResult').innerHTML='<span class="text-danger">Не найдено</span>'; return; }
+                    const c = g.geometry.getCoordinates();
+                    editFoundLat=c[0]; editFoundLng=c[1];
+                    document.getElementById('editGeocodeResult').innerHTML='<span class="text-success">Найдено: '+g.getAddressLine()+'</span>';
+                    document.getElementById('editGeocodeMap').style.display='block';
+                    if (editTempMap) editTempMap.destroy();
+                    ymaps.ready(() => {
+                        editTempMap = new ymaps.Map('editGeocodeMap', {center:[editFoundLat,editFoundLng],zoom:17,controls:['zoomControl']});
+                        if (editTempMarker) editTempMap.geoObjects.remove(editTempMarker);
+                        editTempMarker = new ymaps.Placemark([editFoundLat,editFoundLng], {}, {preset:'islands#redCircleIcon'});
+                        editTempMap.geoObjects.add(editTempMarker);
+                        updateMapTheme();
+                    });
+                }).catch(() => document.getElementById('editGeocodeResult').innerHTML='<span class="text-danger">Ошибка</span>');
+            }, 800);
+        });
         
-        const editAddressInput = document.getElementById('editAddress');
-        editAddressInput.addEventListener('input', (e) => autoGeocodeEdit(e.target.value));
-    });
+        document.getElementById('showLoginBtn').addEventListener('click', () => {
+            document.getElementById('modalLoginError').style.display='none';
+            loginModal.show();
+        });
+        
+        document.getElementById('modalSignInBtn').addEventListener('click', () => {
+            auth.signInWithEmailAndPassword(
+                document.getElementById('modalEmail').value,
+                document.getElementById('modalPassword').value
+            ).then(uc => {
+                loginModal.hide();
+                updateAuthUI(uc.user);
+                showNotification('Вход выполнен');
+            }).catch(e => {
+                document.getElementById('modalLoginError').style.display='block';
+                document.getElementById('modalLoginError').innerText = e.message;
+            });
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => { updateAuthUI(null); showNotification('Вы вышли'); });
+        });
+        
+        auth.onAuthStateChanged(u => updateAuthUI(u));
+        
+        document.getElementById('districtSelect').addEventListener('change', e => {
+            const d = e.target.value;
+            if (d && map) {
+                const coords = {
+                    'Заречный':[46.462,41.517], 'Низовский':[46.455,41.507], 'Кучур-да':[46.485,41.496],
+                    'Центральный':[46.4775,41.543], 'Капустино':[46.550,41.550], 'Промышленный':[46.545,41.545], 'Новосальск':[46.524,41.524]
+                };
+                const c = coords[d] || [46.475,41.541];
+                map.setCenter(c, 14);
+            }
+            updateUI();
+        });
 
-    function updateAuthUI(user) {
-        const showLoginBtn = document.getElementById('showLoginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const userStatus = document.getElementById('userStatus');
-        const adminTab = document.getElementById('adminTabItem');
-        if (user) {
-            showLoginBtn.style.display = 'none';
-            logoutBtn.style.display = 'inline-block';
-            userStatus.innerHTML = 'Сотрудник: <strong>' + user.email + '</strong>';
-            adminTab.style.display = 'block';
-            if (document.getElementById('adminPanel').classList.contains('active')) updateAdminList();
-        } else {
-            showLoginBtn.style.display = 'inline-block';
-            logoutBtn.style.display = 'none';
-            userStatus.innerHTML = '';
-            adminTab.style.display = 'none';
-            const searchTabBtn = document.getElementById('search-tab');
-            if (document.getElementById('adminPanel').classList.contains('active')) searchTabBtn.click();
-        }
-    }
-
-    document.getElementById('showLoginBtn').addEventListener('click', () => { document.getElementById('modalLoginError').style.display = 'none'; loginModal.show(); });
-    document.getElementById('modalSignInBtn').addEventListener('click', () => {
-        const email = document.getElementById('modalEmail').value;
-        const password = document.getElementById('modalPassword').value;
-        const errDiv = document.getElementById('modalLoginError');
-        auth.signInWithEmailAndPassword(email, password).then((userCredential) => { loginModal.hide(); updateAuthUI(userCredential.user); showNotification('Вход выполнен'); }).catch((error) => { errDiv.style.display = 'block'; errDiv.innerText = error.message; });
-    });
-    document.getElementById('logoutBtn').addEventListener('click', () => { auth.signOut().then(() => { updateAuthUI(null); showNotification('Вы вышли'); }); });
-    auth.onAuthStateChanged(user => { updateAuthUI(user); });
-    document.getElementById('addVacancyBtn').addEventListener('click', addVacancy);
-    document.getElementById('admin-tab')?.addEventListener('shown.bs.tab', () => updateAdminList());
-    document.getElementById('search-tab')?.addEventListener('shown.bs.tab', () => map?.invalidateSize());
-    document.getElementById('districtSelect').addEventListener('change', (e) => {
-        const district = e.target.value;
-        if (district && map) { const lat = getLatByDistrict(district); const lng = getLngByDistrict(district); map.setCenter([lat, lng], 14); showNotification('Карта перемещена к району ' + district); }
-        updateUI();
-    });
-
-    const debounce = (fn,delay=300) => { let t; return () => { clearTimeout(t); t = setTimeout(fn,delay); }; };
-    document.getElementById('searchKeyword').addEventListener('input', debounce(updateUI));
-    document.getElementById('salaryFrom').addEventListener('input', debounce(updateUI));
-    document.getElementById('salaryTo').addEventListener('input', debounce(updateUI));
-    document.getElementById('jobType').addEventListener('change', updateUI);
-    
-    window.addEventListener('resize', () => {
-        if (map) map.invalidateSize();
+        const debounce = (fn, d=300) => { let t; return () => { clearTimeout(t); t=setTimeout(fn,d); }; };
+        document.getElementById('searchKeyword').addEventListener('input', debounce(updateUI));
+        document.getElementById('salaryFrom').addEventListener('input', debounce(updateUI));
+        document.getElementById('salaryTo').addEventListener('input', debounce(updateUI));
+        document.getElementById('jobType').addEventListener('change', updateUI);
+        
+        window.addEventListener('resize', () => { if (map) map.invalidateSize(); });
     });
 </script>
 </body>
