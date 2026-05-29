@@ -92,118 +92,55 @@
             color: #0d6efd;
         }
         
-        .tab-panel {
-            display: none;
-            height: calc(100% - 45px);
-        }
-        
-        .tab-panel.active {
-            display: flex;
-        }
-        
-        #searchPanel {
-            display: none;
-        }
-        
-        #searchPanel.active {
-            display: flex;
-        }
-        
-        #adminPanel {
-            display: none;
-            overflow-y: auto;
-            padding: 20px;
-            background: var(--admin-panel-bg);
-            color: var(--text-color);
-        }
-        
-        #adminPanel.active {
-            display: block;
-        }
+        .tab-panel { display: none; height: calc(100% - 45px); }
+        #searchPanel { display: none; }
+        #searchPanel.active { display: flex; }
+        #adminPanel { display: none; overflow-y: auto; padding: 20px; background: var(--admin-panel-bg); color: var(--text-color); }
+        #adminPanel.active { display: block; }
         
         .sidebar {
-            width: 400px;
-            min-width: 400px;
-            display: flex;
-            flex-direction: column;
+            width: 400px; min-width: 400px;
+            display: flex; flex-direction: column;
             border-right: 1px solid var(--border-color);
             overflow: hidden;
         }
         
         .sidebar-scroll {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
+            flex: 1; overflow-y: auto;
+            display: flex; flex-direction: column;
         }
         
-        .map-area {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
+        .map-area { flex: 1; position: relative; overflow: hidden; }
+        #map { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         
-        #map {
-            width: 100%; height: 100%;
-            position: absolute;
-            top: 0; left: 0;
-        }
-        
-        .filter-box {
-            background: var(--bg-filter);
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-            flex-shrink: 0;
-        }
-        
-        .vacancy-list {
-            flex: 1;
-            padding: 10px;
-        }
+        .filter-box { background: var(--bg-filter); padding: 15px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+        .vacancy-list { flex: 1; padding: 10px; }
         
         .vacancy-card { 
-            background: var(--bg-card); 
-            border-radius: 10px; 
-            padding: 12px; 
-            margin-bottom: 8px; 
-            cursor: pointer; 
-            border-left: 4px solid #0d6efd; 
-            color: var(--text-color);
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            background: var(--bg-card); border-radius: 10px; padding: 12px; margin-bottom: 8px; 
+            cursor: pointer; border-left: 4px solid #0d6efd; color: var(--text-color);
+            font-size: 0.9rem; transition: all 0.2s;
         }
         .vacancy-card.favorite { border-left-color: #ffc107; background: #fff8e7; }
         body.dark-theme .vacancy-card.favorite { background: #2a3a2a; }
         .vacancy-card:hover { background: var(--bg-card-hover); }
-        
         .favorite-star { position: absolute; top: 10px; right: 12px; font-size: 1.2rem; color: #ffc107; }
         
         .detail-overlay {
-            display: none;
-            position: absolute;
-            bottom: 20px; right: 20px;
-            width: 420px;
-            max-height: 60vh;
-            background: var(--bg-container);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            z-index: 1000;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
+            display: none; position: absolute; bottom: 20px; right: 20px;
+            width: 420px; max-height: 60vh; background: var(--bg-container);
+            border-radius: 15px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1000; overflow-y: auto; border: 1px solid var(--border-color); color: var(--text-color);
         }
         
-        .btn-route, .btn-share, .btn-fav, .btn-fav-remove, .btn-copy-all { 
+        .btn-route, .btn-fav, .btn-fav-remove, .btn-share { 
             padding: 8px 16px; margin-right: 8px; margin-top: 8px; 
-            font-size: 0.85rem; border-radius: 25px; 
-            display: inline-block; cursor: pointer; border: none;
+            font-size: 0.85rem; border-radius: 25px; display: inline-block; cursor: pointer; border: none;
         }
         .btn-route { background-color: #0d6efd; color: white; }
         .btn-fav { background-color: #ffc107; color: #000; }
         .btn-fav-remove { background-color: #dc3545; color: white; }
-        .btn-share, .btn-copy-all { background-color: #0d6efd; color: white; }
-        .btn-copy-all { background-color: #28a745; }
+        .btn-share { background-color: #28a745; color: white; }
         .btn-close-card { background-color: #6c757d; color: white; border: none; border-radius: 25px; padding: 8px 16px; cursor: pointer; }
         .btn-edit { background-color: #17a2b8; color: white; border: none; border-radius: 25px; padding: 6px 14px; cursor: pointer; margin-right: 5px; }
         .btn-delete { background-color: #dc3545; color: white; border: none; border-radius: 25px; padding: 6px 14px; cursor: pointer; }
@@ -216,99 +153,67 @@
         }
         .toast-notify.error { background: #dc3545; }
         
-        .user-info { 
-            display: flex; justify-content: flex-end; align-items: center; 
-            gap: 8px; flex-wrap: wrap; margin-bottom: 8px;
-        }
+        .user-info { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
         
         .login-btn, .logout-btn, .theme-btn, .mobile-adapt-btn { 
-            padding: 6px 14px; border-radius: 25px; font-size: 0.8rem; 
-            border: none; font-weight: 500; cursor: pointer;
+            padding: 6px 14px; border-radius: 25px; font-size: 0.8rem; border: none; font-weight: 500; cursor: pointer;
         }
         .login-btn { background-color: #0d6efd; color: white; }
         .logout-btn { background-color: #dc3545; color: white; display: none; }
         .theme-btn { background-color: #6c757d; color: white; }
         .mobile-adapt-btn { background-color: #20c997; color: white; }
         
-        .instruction { 
-            background: var(--instruction-bg); padding: 8px; border-radius: 8px; 
-            margin-top: 8px; font-size: 0.75rem; text-align: center; color: var(--text-color);
-        }
-        
+        .instruction { background: var(--instruction-bg); padding: 8px; border-radius: 8px; margin-top: 8px; font-size: 0.75rem; text-align: center; color: var(--text-color); }
         .form-label { font-weight: 600; margin-top: 10px; font-size: 0.85rem; color: var(--text-color); }
         .address-start { display: flex; gap: 6px; margin: 10px 0; }
         .address-start input { flex: 1; border-radius: 25px; padding: 8px 12px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-color); }
         .address-start button { border-radius: 25px; padding: 0 12px; white-space: nowrap; }
         
-        .form-control, .form-select { 
-            background: var(--bg-container); color: var(--text-color); 
-            border-color: var(--border-color); font-size: 0.85rem;
-        }
+        .form-control, .form-select { background: var(--bg-container); color: var(--text-color); border-color: var(--border-color); font-size: 0.85rem; }
         .form-control:focus, .form-select:focus { background: var(--bg-container); color: var(--text-color); }
         
-        .detail-close {
-            position: absolute; top: 10px; right: 14px; font-size: 22px;
-            cursor: pointer; color: #999; background: none; border: none;
-        }
+        .detail-close { position: absolute; top: 10px; right: 14px; font-size: 22px; cursor: pointer; color: #999; background: none; border: none; }
         
         .filter-header {
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; margin-bottom: 8px;
-            user-select: none; -webkit-user-select: none;
+            cursor: pointer; margin-bottom: 8px; user-select: none; -webkit-user-select: none;
         }
         .filter-header h5 { margin: 0; font-size: 0.95rem; }
-        .filter-toggle { 
-            font-size: 1rem; transition: transform 0.3s;
-            width: 30px; height: 30px; line-height: 30px; text-align: center;
-        }
+        .filter-toggle { font-size: 1rem; transition: transform 0.3s; width: 30px; height: 30px; line-height: 30px; text-align: center; }
         .filter-toggle.rotated { transform: rotate(180deg); }
         .filter-body.collapsed { display: none; }
         
         .permission-instruction {
             background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px;
-            padding: 12px; margin: 8px 0; color: #856404; font-size: 0.8rem;
-            display: none; line-height: 1.4;
+            padding: 12px; margin: 8px 0; color: #856404; font-size: 0.8rem; display: none; line-height: 1.4;
         }
         body.dark-theme .permission-instruction { background: #2a2a1a; color: #ffc107; border-color: #ffc107; }
         
-        .phone-wrapper {
-            position: relative;
+        .phone-wrapper { position: relative; }
+        .phone-prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.85rem; pointer-events: none; }
+        .phone-input-styled { padding-left: 35px !important; }
+        .required-star { color: #dc3545; font-weight: bold; margin-left: 2px; }
+        .error-message { color: #dc3545; font-size: 0.75rem; margin-top: 3px; display: none; }
+        .salary-error { border: 1px solid #dc3545 !important; }
+        .address-error { border: 1px solid #dc3545 !important; }
+        
+        .geocode-result-box {
+            padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 0.85rem;
         }
-        .phone-prefix {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            pointer-events: none;
-        }
-        .phone-input-styled {
-            padding-left: 35px !important;
-        }
-        .required-star {
-            color: #dc3545;
-            font-weight: bold;
-            margin-left: 2px;
-        }
-        .error-message {
-            color: #dc3545;
-            font-size: 0.75rem;
-            margin-top: 3px;
-            display: none;
-        }
+        .geocode-result-box.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .geocode-result-box.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        body.dark-theme .geocode-result-box.success { background: #1a3a1a; color: #8fdf8f; border-color: #2a5a2a; }
+        body.dark-theme .geocode-result-box.error { background: #3a1a1a; color: #df8f8f; border-color: #5a2a2a; }
 
         @media (max-width: 767px) {
             #searchPanel.active { flex-direction: column; }
             .sidebar { width: 100%; min-width: 100%; height: 50%; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .sidebar-scroll { overflow-y: auto; }
             .map-area { height: 50%; }
             .detail-overlay { width: 90%; left: 5%; right: 5%; bottom: 16px; max-height: 50vh; }
         }
         
         body.mobile-optimized #searchPanel.active { flex-direction: column; }
         body.mobile-optimized .sidebar { width: 100%; min-width: 100%; height: 50%; border-right: none; border-bottom: 1px solid var(--border-color); }
-        body.mobile-optimized .sidebar-scroll { overflow-y: auto; }
         body.mobile-optimized .map-area { height: 50%; width: 100%; }
     </style>
 </head>
@@ -337,7 +242,7 @@
                     <div class="filter-box">
                         <div class="filter-header" onclick="toggleFilters()">
                             <h5>Параметры поиска</h5>
-                            <span class="filter-toggle" id="filterToggleIcon">▼</span>
+                            <span class="filter-toggle" id="filterToggleIcon">&#9660;</span>
                         </div>
                         <div class="filter-body" id="filterBody">
                             <div class="mb-2">
@@ -370,9 +275,10 @@
                                 <label class="form-check-label">Только избранные</label>
                             </div>
                             <div class="address-start">
-                                <input type="text" id="startAddress" class="form-control" placeholder="Адрес отправления">
+                                <input type="text" id="startAddress" class="form-control" placeholder="Адрес отправления (г. Сальск)">
                                 <button id="setStartByAddressBtn" class="btn btn-success btn-sm">Установить</button>
                             </div>
+                            <div id="startAddressResult" class="geocode-result-box" style="display:none;"></div>
                             <div class="d-flex gap-2 mt-2">
                                 <button class="btn btn-secondary flex-fill btn-sm" onclick="resetFilters()">Сбросить</button>
                                 <button id="locateMeBtn" class="btn btn-warning flex-fill btn-sm">Моё местоположение</button>
@@ -381,7 +287,7 @@
                         </div>
                         <hr class="my-2">
                         <div id="routeInfo" class="small text-muted"></div>
-                        <div class="instruction">Маршрут: укажите точку отправления, затем выберите вакансию и нажмите «Маршрут».</div>
+                        <div class="instruction">Маршрут: укажите точку отправления, затем выберите вакансию и нажмите "Маршрут".</div>
                     </div>
                     <div class="vacancy-list" id="vacancyList"></div>
                 </div>
@@ -389,7 +295,7 @@
             <div class="map-area">
                 <div id="map"></div>
                 <div id="vacancyDetail" class="detail-overlay">
-                    <button class="detail-close" onclick="closeDetailCard()">×</button>
+                    <button class="detail-close" onclick="closeDetailCard()">&times;</button>
                     <div id="vacancyDetailContent"></div>
                     <div class="mt-2"><button class="btn-close-card" onclick="closeDetailCard()">Закрыть</button></div>
                 </div>
@@ -419,9 +325,11 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-label">Зарплата от (руб) <span class="required-star">*</span></div>
-                        <input type="number" id="newSalaryMin" class="form-control" placeholder="30000">
+                        <input type="number" id="newSalaryMin" class="form-control" placeholder="30000" min="0">
+                        <div class="error-message" id="newSalaryMinError">Укажите минимальную зарплату</div>
                         <div class="form-label">Зарплата до (руб) <span class="required-star">*</span></div>
-                        <input type="number" id="newSalaryMax" class="form-control" placeholder="50000">
+                        <input type="number" id="newSalaryMax" class="form-control" placeholder="50000" min="0">
+                        <div class="error-message" id="newSalaryMaxError">Укажите максимальную зарплату</div>
                         <div class="form-label">Тип занятости <span class="required-star">*</span></div>
                         <select id="newType" class="form-select">
                             <option value="full">Полная занятость</option>
@@ -438,10 +346,10 @@
                     <div class="col-md-12">
                         <div class="form-label">Адрес места работы <span class="required-star">*</span></div>
                         <input type="text" id="newAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
-                        <small>Введите адрес. Координаты определятся автоматически.</small>
+                        <small>Введите адрес в городе Сальск. Координаты определятся автоматически.</small>
                     </div>
                 </div>
-                <div id="geocodeResult" class="mt-2"></div>
+                <div id="geocodeResult" class="geocode-result-box" style="display:none;"></div>
                 <div id="adminMap" style="height:200px;width:100%;margin-top:10px;display:none;"></div>
                 <div class="mt-2">
                     <div class="form-label">Описание вакансии</div>
@@ -462,10 +370,7 @@
 <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Вход для сотрудников ЦЗН</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+            <div class="modal-header"><h5 class="modal-title">Вход для сотрудников ЦЗН</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div id="modalLoginError" class="alert alert-danger" style="display:none;"></div>
                 <input type="text" id="modalEmail" class="form-control mb-2" placeholder="Логин">
@@ -479,54 +384,32 @@
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Редактирование вакансии</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+            <div class="modal-header"><h5 class="modal-title">Редактирование вакансии</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <input type="hidden" id="editFirebaseId">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-label">Название должности <span class="required-star">*</span></div>
-                        <input type="text" id="editTitle" class="form-control">
-                        <div class="form-label">Компания <span class="required-star">*</span></div>
-                        <input type="text" id="editCompany" class="form-control">
+                        <div class="form-label">Название должности <span class="required-star">*</span></div><input type="text" id="editTitle" class="form-control">
+                        <div class="form-label">Компания <span class="required-star">*</span></div><input type="text" id="editCompany" class="form-control">
                         <div class="form-label">Телефон <span class="required-star">*</span></div>
-                        <div class="phone-wrapper">
-                            <span class="phone-prefix">+7</span>
-                            <input type="tel" id="editPhone" class="form-control phone-input-styled" placeholder="(___) ___-__-__" maxlength="15" inputmode="numeric">
-                        </div>
+                        <div class="phone-wrapper"><span class="phone-prefix">+7</span><input type="tel" id="editPhone" class="form-control phone-input-styled" placeholder="(___) ___-__-__" maxlength="15" inputmode="numeric"></div>
                         <div class="error-message" id="editPhoneError">Введите 10 цифр номера телефона</div>
                         <div class="form-label">Район <span class="required-star">*</span></div>
-                        <select id="editDistrict" class="form-select">
-                            <option>Заречный</option><option>Низовский</option><option>Кучур-да</option>
-                            <option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option>
-                        </select>
+                        <select id="editDistrict" class="form-select"><option>Заречный</option><option>Низовский</option><option>Кучур-да</option><option>Центральный</option><option>Капустино</option><option>Промышленный</option><option>Новосальск</option></select>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-label">Зарплата от (руб) <span class="required-star">*</span></div>
-                        <input type="number" id="editSalaryMin" class="form-control">
-                        <div class="form-label">Зарплата до (руб) <span class="required-star">*</span></div>
-                        <input type="number" id="editSalaryMax" class="form-control">
+                        <div class="form-label">Зарплата от (руб) <span class="required-star">*</span></div><input type="number" id="editSalaryMin" class="form-control" min="0">
+                        <div class="error-message" id="editSalaryMinError">Укажите минимальную зарплату</div>
+                        <div class="form-label">Зарплата до (руб) <span class="required-star">*</span></div><input type="number" id="editSalaryMax" class="form-control" min="0">
+                        <div class="error-message" id="editSalaryMaxError">Укажите максимальную зарплату</div>
                         <div class="form-label">Тип занятости <span class="required-star">*</span></div>
-                        <select id="editType" class="form-select">
-                            <option value="full">Полная занятость</option>
-                            <option value="part">Частичная занятость</option>
-                            <option value="remote">Удалённая работа</option>
-                        </select>
-                        <div class="form-label">График работы</div>
-                        <input type="text" id="editSchedule" class="form-control">
-                        <div class="form-label">Требования</div>
-                        <input type="text" id="editRequirements" class="form-control">
+                        <select id="editType" class="form-select"><option value="full">Полная занятость</option><option value="part">Частичная занятость</option><option value="remote">Удалённая работа</option></select>
+                        <div class="form-label">График работы</div><input type="text" id="editSchedule" class="form-control">
+                        <div class="form-label">Требования</div><input type="text" id="editRequirements" class="form-control">
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col-md-12">
-                        <div class="form-label">Адрес места работы <span class="required-star">*</span></div>
-                        <input type="text" id="editAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск">
-                    </div>
-                </div>
-                <div id="editGeocodeResult" class="mt-2"></div>
+                <div class="row mt-2"><div class="col-md-12"><div class="form-label">Адрес места работы <span class="required-star">*</span></div><input type="text" id="editAddress" class="form-control" placeholder="ул. Ленина, 10, Сальск"></div></div>
+                <div id="editGeocodeResult" class="geocode-result-box" style="display:none;"></div>
                 <div id="editGeocodeMap" style="height:200px;width:100%;margin-top:10px;display:none;"></div>
                 <div class="mt-2"><div class="form-label">Описание</div><textarea id="editDescription" class="form-control" rows="3"></textarea></div>
             </div>
@@ -559,8 +442,7 @@
     const database = firebase.database();
     const auth = firebase.auth();
 
-    let map = null, userMarker = null, currentRoute = null;
-    let vacancies = [];
+    let map = null, userMarker = null, currentRoute = null, vacancies = [];
     let tempMap = null, tempMarker = null, foundLat = null, foundLng = null, geocodeTimeout = null;
     let editTempMap = null, editTempMarker = null, editFoundLat = null, editFoundLng = null, editGeocodeTimeout = null;
     let editModal, loginModal;
@@ -573,21 +455,107 @@
         {"featureType":"water","elementType":"geometry","stylers":[{"lightness":-30}]}
     ];
 
+    function isInSalsk(addressLine) {
+        return addressLine && (addressLine.toLowerCase().includes('сальск') || addressLine.toLowerCase().includes('сальский'));
+    }
+
+    function showGeocodeResult(elementId, success, message) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        el.style.display = 'block';
+        el.className = 'geocode-result-box ' + (success ? 'success' : 'error');
+        el.innerHTML = message;
+    }
+
+    function hideGeocodeResult(elementId) {
+        const el = document.getElementById(elementId);
+        if (el) el.style.display = 'none';
+    }
+
     function filterPhoneInput(e) {
-        let value = e.target.value;
-        let digits = value.replace(/\D/g, '');
+        let digits = e.target.value.replace(/\D/g, '');
         if (digits.length > 10) digits = digits.slice(0, 10);
-        let formatted = '';
-        if (digits.length > 0) formatted += '(' + digits.substring(0, 3);
-        if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
-        if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
-        if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
-        e.target.value = formatted;
-        const errorEl = document.getElementById(e.target.id + 'Error');
-        if (errorEl && (digits.length === 10 || digits.length === 0)) errorEl.style.display = 'none';
+        let f = '';
+        if (digits.length > 0) f += '(' + digits.substring(0, 3);
+        if (digits.length >= 4) f += ') ' + digits.substring(3, 6);
+        if (digits.length >= 7) f += '-' + digits.substring(6, 8);
+        if (digits.length >= 9) f += '-' + digits.substring(8, 10);
+        e.target.value = f;
+        const errEl = document.getElementById(e.target.id + 'Error');
+        if (errEl && (digits.length === 10 || digits.length === 0)) errEl.style.display = 'none';
     }
 
     function getPhoneDigits(v) { return v.replace(/\D/g, ''); }
+
+    function validateSalary(prefix) {
+        const minEl = document.getElementById(prefix + 'SalaryMin');
+        const maxEl = document.getElementById(prefix + 'SalaryMax');
+        const minErr = document.getElementById(prefix + 'SalaryMinError');
+        const maxErr = document.getElementById(prefix + 'SalaryMaxError');
+        let valid = true;
+        const minVal = parseInt(minEl.value);
+        const maxVal = parseInt(maxEl.value);
+        
+        if (isNaN(minVal) || minVal < 0) {
+            if (minErr) { minErr.style.display = 'block'; minEl.classList.add('salary-error'); }
+            valid = false;
+        } else {
+            if (minErr) { minErr.style.display = 'none'; minEl.classList.remove('salary-error'); }
+        }
+        
+        if (isNaN(maxVal) || maxVal < 0) {
+            if (maxErr) { maxErr.style.display = 'block'; maxEl.classList.add('salary-error'); }
+            valid = false;
+        } else {
+            if (maxErr) { maxErr.style.display = 'none'; maxEl.classList.remove('salary-error'); }
+        }
+        
+        if (valid && minVal > maxVal) {
+            if (maxErr) { maxErr.textContent = 'Максимальная зарплата должна быть больше минимальной'; maxErr.style.display = 'block'; maxEl.classList.add('salary-error'); }
+            valid = false;
+        }
+        
+        return valid;
+    }
+
+    function clearSalaryErrors(prefix) {
+        ['SalaryMin', 'SalaryMax'].forEach(s => {
+            const el = document.getElementById(prefix + s);
+            const err = document.getElementById(prefix + s + 'Error');
+            if (el) el.classList.remove('salary-error');
+            if (err) { err.style.display = 'none'; err.textContent = s === 'SalaryMin' ? 'Укажите минимальную зарплату' : 'Укажите максимальную зарплату'; }
+        });
+    }
+
+    function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+        }
+        return fallbackCopy(text);
+    }
+
+    function fallbackCopy(text) {
+        return new Promise((resolve, reject) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            textarea.setAttribute('readonly', '');
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, text.length);
+            try {
+                const success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                if (success) resolve();
+                else reject(new Error('copy failed'));
+            } catch (e) {
+                document.body.removeChild(textarea);
+                reject(e);
+            }
+        });
+    }
 
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('tab-btn')) {
@@ -663,14 +631,36 @@
     }
 
     function setStartByAddress() {
-        const a = document.getElementById('startAddress').value.trim();
-        if (!a) { showNotification('Введите адрес', true); return; }
-        ymaps.geocode(addSalsk(a), {results:1}).then(r => {
+        const addressInput = document.getElementById('startAddress');
+        const a = addressInput.value.trim();
+        if (!a) { 
+            showGeocodeResult('startAddressResult', false, 'Введите адрес отправления');
+            showNotification('Введите адрес отправления', true); 
+            return; 
+        }
+        hideGeocodeResult('startAddressResult');
+        ymaps.geocode(addSalsk(a), { results: 1 }).then(r => {
             const g = r.geoObjects.get(0);
-            if (!g) { showNotification('Адрес не найден', true); return; }
-            const c = g.geometry.getCoordinates();
-            setStartPoint({lat:c[0],lng:c[1]}, 'addr');
-        }).catch(() => showNotification('Ошибка', true));
+            if (!g) {
+                showGeocodeResult('startAddressResult', false, 'Адрес не найден: "' + a + '". Проверьте правильность написания.');
+                showNotification('Адрес не найден', true);
+                addressInput.classList.add('address-error');
+                return;
+            }
+            const addressLine = g.getAddressLine();
+            if (!isInSalsk(addressLine)) {
+                showGeocodeResult('startAddressResult', false, 'Адрес не найден в городе Сальск. Найден адрес: "' + addressLine + '". Уточните запрос.');
+                showNotification('Адрес не в Сальске', true);
+                addressInput.classList.add('address-error');
+                return;
+            }
+            addressInput.classList.remove('address-error');
+            showGeocodeResult('startAddressResult', true, 'Найдено: ' + addressLine);
+            setStartPoint({lat:g.geometry.getCoordinates()[0], lng:g.geometry.getCoordinates()[1]}, 'addr');
+        }).catch(() => {
+            showGeocodeResult('startAddressResult', false, 'Ошибка при поиске адреса. Проверьте подключение к интернету.');
+            showNotification('Ошибка поиска адреса', true);
+        });
     }
 
     function locateUser() {
@@ -680,8 +670,7 @@
             p => setStartPoint({lat:p.coords.latitude, lng:p.coords.longitude}, 'geo'),
             e => {
                 if (e.code === 1) {
-                    document.getElementById('permissionInstruction').innerHTML = 
-                        '<strong>Доступ запрещен</strong><div>Разрешите геолокацию в настройках браузера</div>';
+                    document.getElementById('permissionInstruction').innerHTML = '<strong>Доступ запрещен</strong><div>Разрешите геолокацию в настройках браузера</div>';
                     document.getElementById('permissionInstruction').style.display = 'block';
                 }
                 showNotification('Не удалось определить местоположение', true);
@@ -704,21 +693,40 @@
 
     function autoGeocode(addr) {
         if (geocodeTimeout) clearTimeout(geocodeTimeout);
+        const addressInput = document.getElementById('newAddress');
         if (!addr || !addr.trim()) {
-            document.getElementById('geocodeResult').innerHTML = '';
+            hideGeocodeResult('geocodeResult');
             if (tempMap) { tempMap.destroy(); tempMap = null; }
             document.getElementById('adminMap').style.display = 'none';
             foundLat = foundLng = null;
+            addressInput.classList.remove('address-error');
             return;
         }
         geocodeTimeout = setTimeout(() => {
-            ymaps.geocode(addSalsk(addr), {results:1}).then(r => {
+            ymaps.geocode(addSalsk(addr), { results: 1 }).then(r => {
                 const g = r.geoObjects.get(0);
-                if (!g) { document.getElementById('geocodeResult').innerHTML='<span class="text-danger">Не найдено</span>'; return; }
-                const c = g.geometry.getCoordinates();
-                foundLat=c[0]; foundLng=c[1];
-                document.getElementById('geocodeResult').innerHTML='<span class="text-success">Найдено: '+g.getAddressLine()+'</span>';
-                document.getElementById('adminMap').style.display='block';
+                if (!g) {
+                    showGeocodeResult('geocodeResult', false, 'Адрес не найден: "' + addr + '". Проверьте правильность написания.');
+                    foundLat = foundLng = null;
+                    if (tempMap) { tempMap.destroy(); tempMap = null; }
+                    document.getElementById('adminMap').style.display = 'none';
+                    addressInput.classList.add('address-error');
+                    return;
+                }
+                const addressLine = g.getAddressLine();
+                if (!isInSalsk(addressLine)) {
+                    showGeocodeResult('geocodeResult', false, 'Адрес не найден в городе Сальск. Найден: "' + addressLine + '". Уточните запрос.');
+                    foundLat = foundLng = null;
+                    if (tempMap) { tempMap.destroy(); tempMap = null; }
+                    document.getElementById('adminMap').style.display = 'none';
+                    addressInput.classList.add('address-error');
+                    return;
+                }
+                addressInput.classList.remove('address-error');
+                foundLat = g.geometry.getCoordinates()[0];
+                foundLng = g.geometry.getCoordinates()[1];
+                showGeocodeResult('geocodeResult', true, 'Найдено: ' + addressLine);
+                document.getElementById('adminMap').style.display = 'block';
                 if (tempMap) tempMap.destroy();
                 ymaps.ready(() => {
                     tempMap = new ymaps.Map('adminMap', {center:[foundLat,foundLng],zoom:17,controls:['zoomControl']});
@@ -727,14 +735,16 @@
                     tempMap.geoObjects.add(tempMarker);
                     updateMapTheme();
                 });
-            }).catch(() => document.getElementById('geocodeResult').innerHTML='<span class="text-danger">Ошибка</span>');
+            }).catch(() => {
+                showGeocodeResult('geocodeResult', false, 'Ошибка при поиске адреса. Проверьте подключение к интернету.');
+                addressInput.classList.add('address-error');
+            });
         }, 800);
     }
 
     function loadVacanciesFromDB() {
         database.ref('vacancies').on('value', s => {
-            const d = s.val();
-            vacancies = d ? Object.entries(d).map(([id,v]) => ({firebaseId:id, ...v})) : [];
+            vacancies = s.val() ? Object.entries(s.val()).map(([id,v]) => ({firebaseId:id, ...v})) : [];
             updateUI();
             updateAdminList();
         });
@@ -756,29 +766,38 @@
         document.getElementById('newPhoneError').style.display = 'none';
         document.getElementById('newPhone').style.borderColor = '';
         
+        if (!validateSalary('new')) { showNotification('Укажите корректную зарплату', true); return; }
         if (!title || !company) { showNotification('Заполните название и компанию', true); return; }
-        if (!address) { showNotification('Введите адрес', true); return; }
-        if (foundLat===null || foundLng===null) { showNotification('Дождитесь определения координат', true); return; }
+        if (!address) { 
+            showGeocodeResult('geocodeResult', false, 'Введите адрес места работы');
+            showNotification('Введите адрес', true); return; 
+        }
+        if (foundLat===null || foundLng===null) { 
+            showNotification('Адрес не найден в Сальске. Проверьте правильность ввода.', true); return; 
+        }
+        
+        const salaryMin = parseInt(document.getElementById('newSalaryMin').value);
+        const salaryMax = parseInt(document.getElementById('newSalaryMax').value);
         
         database.ref('vacancies').push({
             title, company, phone: phoneDigits, address: addSalsk(address),
             district: document.getElementById('newDistrict').value,
-            salary_min: parseInt(document.getElementById('newSalaryMin').value)||0,
-            salary_max: parseInt(document.getElementById('newSalaryMax').value)||0,
-            salary_text: (document.getElementById('newSalaryMin').value||0)+' - '+(document.getElementById('newSalaryMax').value||0)+' руб.',
+            salary_min: salaryMin, salary_max: salaryMax,
+            salary_text: salaryMin + ' - ' + salaryMax + ' руб.',
             type: document.getElementById('newType').value,
             schedule: document.getElementById('newSchedule').value,
             requirements: document.getElementById('newRequirements').value,
             description: document.getElementById('newDescription').value,
             lat: foundLat, lng: foundLng,
-            createdBy: auth.currentUser.email,
-            createdAt: new Date().toISOString()
+            createdBy: auth.currentUser.email, createdAt: new Date().toISOString()
         }).then(() => {
             showNotification('Вакансия добавлена');
             ['newTitle','newCompany','newPhone','newSalaryMin','newSalaryMax','newSchedule','newRequirements','newDescription','newAddress'].forEach(id => document.getElementById(id).value='');
+            clearSalaryErrors('new');
+            hideGeocodeResult('geocodeResult');
             foundLat=foundLng=null;
-            document.getElementById('geocodeResult').innerHTML='';
             document.getElementById('adminMap').style.display='none';
+            document.getElementById('newAddress').classList.remove('address-error');
             if (tempMap) { tempMap.destroy(); tempMap=null; }
         }).catch(e => showNotification('Ошибка: '+e.message, true));
     }
@@ -792,16 +811,14 @@
         const c = document.getElementById('vacancyAdminList');
         if (!c) return;
         if (!vacancies.length) { c.innerHTML = '<div class="text-muted p-3">Нет вакансий</div>'; return; }
-        let h = '';
-        vacancies.forEach(v => {
-            h += '<div class="vacancy-card" style="border-left-color:#dc3545;position:relative;">'+
-                '<strong>'+v.title+'</strong><br>'+v.company+'<br>'+v.salary_text+'<br>'+v.district+
-                '<div class="mt-2">'+
-                '<button class="btn-edit" onclick="editVacancy(\''+v.firebaseId+'\')">Редактировать</button>'+
-                '<button class="btn-delete" onclick="deleteVacancy(\''+v.firebaseId+'\')">Удалить</button>'+
-                '</div></div>';
-        });
-        c.innerHTML = h;
+        c.innerHTML = vacancies.map(v => 
+            '<div class="vacancy-card" style="border-left-color:#dc3545;position:relative;">'+
+            '<strong>'+v.title+'</strong><br>'+v.company+'<br>'+v.salary_text+'<br>'+v.district+
+            '<div class="mt-2">'+
+            '<button class="btn-edit" onclick="editVacancy(\''+v.firebaseId+'\')">Редактировать</button>'+
+            '<button class="btn-delete" onclick="deleteVacancy(\''+v.firebaseId+'\')">Удалить</button>'+
+            '</div></div>'
+        ).join('');
     }
 
     function editVacancy(fid) {
@@ -810,11 +827,8 @@
         document.getElementById('editFirebaseId').value = fid;
         document.getElementById('editTitle').value = v.title || '';
         document.getElementById('editCompany').value = v.company || '';
-        if (v.phone && v.phone.length === 10) {
-            document.getElementById('editPhone').value = '(' + v.phone.slice(0,3) + ') ' + v.phone.slice(3,6) + '-' + v.phone.slice(6,8) + '-' + v.phone.slice(8,10);
-        } else {
-            document.getElementById('editPhone').value = v.phone || '';
-        }
+        document.getElementById('editPhone').value = v.phone && v.phone.length === 10 ? 
+            '(' + v.phone.slice(0,3) + ') ' + v.phone.slice(3,6) + '-' + v.phone.slice(6,8) + '-' + v.phone.slice(8,10) : (v.phone || '');
         document.getElementById('editAddress').value = v.address || '';
         document.getElementById('editDistrict').value = v.district || 'Центральный';
         document.getElementById('editSalaryMin').value = v.salary_min || 0;
@@ -824,10 +838,12 @@
         document.getElementById('editRequirements').value = v.requirements || '';
         document.getElementById('editDescription').value = v.description || '';
         editFoundLat = v.lat; editFoundLng = v.lng;
-        document.getElementById('editGeocodeResult').innerHTML = '';
+        hideGeocodeResult('editGeocodeResult');
         document.getElementById('editGeocodeMap').style.display = 'none';
         document.getElementById('editPhoneError').style.display = 'none';
         document.getElementById('editPhone').style.borderColor = '';
+        document.getElementById('editAddress').classList.remove('address-error');
+        clearSalaryErrors('edit');
         if (editTempMap) { editTempMap.destroy(); editTempMap = null; }
         editModal.show();
     }
@@ -845,25 +861,29 @@
         document.getElementById('editPhoneError').style.display = 'none';
         document.getElementById('editPhone').style.borderColor = '';
         
+        if (!validateSalary('edit')) { showNotification('Укажите корректную зарплату', true); return; }
+        
         const address = document.getElementById('editAddress').value.trim();
         if (address && (editFoundLat===null || editFoundLng===null)) {
-            showNotification('Дождитесь определения координат', true); return;
+            showNotification('Адрес не найден в Сальске. Проверьте правильность ввода.', true);
+            return;
         }
+        
         const coords = {
             'Заречный':[46.462,41.517], 'Низовский':[46.455,41.507], 'Кучур-да':[46.485,41.496],
             'Центральный':[46.4775,41.543], 'Капустино':[46.550,41.550], 'Промышленный':[46.545,41.545], 'Новосальск':[46.524,41.524]
         };
         const def = coords[document.getElementById('editDistrict').value] || [46.475,41.541];
+        const salaryMin = parseInt(document.getElementById('editSalaryMin').value);
+        const salaryMax = parseInt(document.getElementById('editSalaryMax').value);
         
         database.ref('vacancies/'+fid).update({
             title: document.getElementById('editTitle').value,
             company: document.getElementById('editCompany').value,
-            phone: phoneDigits,
-            address,
+            phone: phoneDigits, address,
             district: document.getElementById('editDistrict').value,
-            salary_min: parseInt(document.getElementById('editSalaryMin').value)||0,
-            salary_max: parseInt(document.getElementById('editSalaryMax').value)||0,
-            salary_text: (document.getElementById('editSalaryMin').value||0)+' - '+(document.getElementById('editSalaryMax').value||0)+' руб.',
+            salary_min: salaryMin, salary_max: salaryMax,
+            salary_text: salaryMin + ' - ' + salaryMax + ' руб.',
             type: document.getElementById('editType').value,
             schedule: document.getElementById('editSchedule').value,
             requirements: document.getElementById('editRequirements').value,
@@ -898,17 +918,14 @@
     function updateUI() {
         const filtered = filterVacancies();
         const list = document.getElementById('vacancyList');
-        if (!filtered.length) { list.innerHTML = '<div class="alert alert-warning">Ничего не найдено</div>'; }
-        else {
-            let h = '<h5>Найдено: '+filtered.length+'</h5>';
-            filtered.forEach(v => {
-                const fav = favorites.includes(v.firebaseId);
-                h += '<div class="vacancy-card'+(fav?' favorite':'')+'" onclick="showDetails(\''+v.firebaseId+'\')" style="position:relative;">'+
-                    (fav?'<span class="favorite-star">★</span>':'')+
-                    '<strong>'+v.title+'</strong><br>'+v.company+'<br>'+v.salary_text+'<br>'+v.district+'</div>';
-            });
-            list.innerHTML = h;
-        }
+        if (!filtered.length) { list.innerHTML = '<div class="alert alert-warning">Ничего не найдено</div>'; return; }
+        list.innerHTML = '<h5>Найдено: '+filtered.length+'</h5>' + filtered.map(v => {
+            const fav = favorites.includes(v.firebaseId);
+            return '<div class="vacancy-card'+(fav?' favorite':'')+'" onclick="showDetails(\''+v.firebaseId+'\')" style="position:relative;">'+
+                (fav?'<span class="favorite-star">&#9733;</span>':'')+
+                '<strong>'+v.title+'</strong><br>'+v.company+'<br>'+v.salary_text+'<br>'+v.district+'</div>';
+        }).join('');
+        
         if (map) {
             const old = userMarker;
             map.geoObjects.removeAll();
@@ -927,15 +944,44 @@
         }
     }
 
+    function shareVacancy(fid) {
+        const v = vacancies.find(x => x.firebaseId === fid);
+        if (!v) { showNotification('Вакансия не найдена', true); return; }
+        
+        const typeText = v.type==='full'?'Полная занятость':v.type==='part'?'Частичная занятость':'Удалённая работа';
+        const phone = v.phone && v.phone.length === 10 ? 
+            '+7 '+v.phone.slice(0,3)+' '+v.phone.slice(3,6)+'-'+v.phone.slice(6,8)+'-'+v.phone.slice(8,10) : '';
+        
+        const text = 'ВАКАНСИЯ\n' +
+            'Должность: ' + v.title + '\n' +
+            'Компания: ' + v.company + '\n' +
+            (phone ? 'Телефон: ' + phone + '\n' : '') +
+            (v.address ? 'Адрес: ' + v.address + '\n' : '') +
+            'Район: ' + v.district + '\n' +
+            'Зарплата: ' + v.salary_text + '\n' +
+            'Тип занятости: ' + typeText + '\n' +
+            (v.schedule ? 'График: ' + v.schedule + '\n' : '') +
+            (v.requirements ? 'Требования: ' + v.requirements + '\n' : '') +
+            (v.description ? 'Описание: ' + v.description + '\n' : '') +
+            '\nЦентр занятости населения г. Сальск';
+        
+        copyToClipboard(text).then(() => {
+            showNotification('Информация скопирована в буфер обмена');
+            closeDetailCard();
+        }).catch(() => {
+            alert('Не удалось скопировать автоматически. Скопируйте текст вручную:\n\n' + text);
+        });
+    }
+
     function showDetails(fid) {
         const v = vacancies.find(x => x.firebaseId === fid);
         if (!v) return;
-        const div = document.getElementById('vacancyDetail');
-        const cnt = document.getElementById('vacancyDetailContent');
         const typeText = v.type==='full'?'Полная':v.type==='part'?'Частичная':'Удалённая';
-        const phone = v.phone ? '+7 '+v.phone.slice(0,3)+' '+v.phone.slice(3,6)+'-'+v.phone.slice(6,8)+'-'+v.phone.slice(8,10) : '';
+        const phone = v.phone && v.phone.length === 10 ? 
+            '+7 '+v.phone.slice(0,3)+' '+v.phone.slice(3,6)+'-'+v.phone.slice(6,8)+'-'+v.phone.slice(8,10) : '';
         const isFav = favorites.includes(v.firebaseId);
-        cnt.innerHTML = '<h6>'+v.title+'</h6><p><strong>'+v.company+'</strong></p>'+
+        document.getElementById('vacancyDetailContent').innerHTML = 
+            '<h6>'+v.title+'</h6><p><strong>'+v.company+'</strong></p>'+
             (phone?'<p><strong>Телефон:</strong> '+phone+'</p>':'')+
             (v.address?'<p><strong>Адрес:</strong> '+v.address+'</p>':'')+
             '<p><strong>Район:</strong> '+v.district+'</p>'+
@@ -947,37 +993,15 @@
             '<button class="btn-route" onclick="buildRoute('+v.lat+','+v.lng+')">Маршрут</button>'+
             (isFav?'<button class="btn-fav-remove" onclick="toggleFav(\''+v.firebaseId+'\')">Удалить из избранного</button>':
                      '<button class="btn-fav" onclick="toggleFav(\''+v.firebaseId+'\')">В избранное</button>')+
-            '<button class="btn-share" onclick="shareVacancy(\''+v.firebaseId+'\')">Поделиться</button>'+
-            '<button class="btn-copy-all" onclick="copyFull(\''+v.firebaseId+'\')">Копировать всё</button>';
-        div.style.display = 'block';
+            '<button class="btn-share" onclick="shareVacancy(\''+v.firebaseId+'\')">Поделиться</button>';
+        document.getElementById('vacancyDetail').style.display = 'block';
     }
 
     function toggleFav(fid) {
-        if (favorites.includes(fid)) favorites = favorites.filter(x => x!==fid);
-        else favorites.push(fid);
+        favorites = favorites.includes(fid) ? favorites.filter(x => x!==fid) : [...favorites, fid];
         localStorage.setItem('favorites', JSON.stringify(favorites));
         updateUI();
         showDetails(fid);
-    }
-
-    function copyFull(fid) {
-        const v = vacancies.find(x => x.firebaseId === fid);
-        if (!v) return;
-        const typeText = v.type==='full'?'Полная':v.type==='part'?'Частичная':'Удалённая';
-        const phone = v.phone ? '+7 '+v.phone.slice(0,3)+' '+v.phone.slice(3,6)+'-'+v.phone.slice(6,8)+'-'+v.phone.slice(8,10) : '';
-        const t = 'ВАКАНСИЯ\nДолжность: '+v.title+'\nКомпания: '+v.company+
-            (phone?'\nТелефон: '+phone:'')+(v.address?'\nАдрес: '+v.address:'')+
-            '\nРайон: '+v.district+'\nЗарплата: '+v.salary_text+'\nТип: '+typeText+
-            (v.schedule?'\nГрафик: '+v.schedule:'')+(v.requirements?'\nТребования: '+v.requirements:'')+
-            (v.description?'\nОписание: '+v.description:'')+'\n\nЦЗН г. Сальск';
-        navigator.clipboard.writeText(t).then(() => { showNotification('Скопировано'); closeDetailCard(); });
-    }
-
-    function shareVacancy(fid) {
-        const v = vacancies.find(x => x.firebaseId === fid);
-        if (!v) return;
-        navigator.clipboard.writeText(v.title+' в '+v.company+'\nЗарплата: '+v.salary_text+'\nРайон: '+v.district)
-            .then(() => { showNotification('Скопировано'); closeDetailCard(); });
     }
 
     function resetFilters() {
@@ -985,6 +1009,8 @@
         document.getElementById('jobType').value='';
         document.getElementById('districtSelect').value='';
         document.getElementById('showFavoritesOnly').checked=false;
+        hideGeocodeResult('startAddressResult');
+        document.getElementById('startAddress').classList.remove('address-error');
         updateUI();
         document.getElementById('routeInfo').innerHTML='';
         if (currentRoute) { map.geoObjects.remove(currentRoute); currentRoute=null; }
@@ -993,7 +1019,7 @@
     function initMap() {
         ymaps.ready(() => {
             map = new ymaps.Map("map", {center:[46.475,41.541],zoom:13,controls:['zoomControl']});
-            map.events.add('click', e => { const c=e.get('coords'); setStartPoint({lat:c[0],lng:c[1]},'click'); });
+            map.events.add('click', e => setStartPoint({lat:e.get('coords')[0],lng:e.get('coords')[1]},'click'));
             updateMapTheme();
             updateUI();
         });
@@ -1036,34 +1062,43 @@
         document.getElementById('addVacancyBtn').addEventListener('click', addVacancy);
         document.getElementById('newAddress').addEventListener('input', e => autoGeocode(e.target.value));
         
+        document.getElementById('startAddress').addEventListener('input', function() {
+            this.classList.remove('address-error');
+            hideGeocodeResult('startAddressResult');
+        });
+        document.getElementById('newAddress').addEventListener('input', function() {
+            this.classList.remove('address-error');
+        });
+        document.getElementById('editAddress').addEventListener('input', function() {
+            this.classList.remove('address-error');
+            hideGeocodeResult('editGeocodeResult');
+        });
+        
         document.getElementById('newPhone').addEventListener('input', filterPhoneInput);
         document.getElementById('editPhone').addEventListener('input', filterPhoneInput);
         
-        document.getElementById('newPhone').addEventListener('focus', function() {
-            document.getElementById('newPhoneError').style.display = 'none';
-            this.style.borderColor = '';
+        ['newPhone', 'editPhone'].forEach(id => {
+            document.getElementById(id).addEventListener('focus', function() {
+                document.getElementById(id+'Error').style.display = 'none';
+                this.style.borderColor = '';
+            });
         });
-        document.getElementById('editPhone').addEventListener('focus', function() {
-            document.getElementById('editPhoneError').style.display = 'none';
-            this.style.borderColor = '';
-        });
+        
+        ['newSalaryMin', 'newSalaryMax'].forEach(id => document.getElementById(id).addEventListener('input', () => clearSalaryErrors('new')));
+        ['editSalaryMin', 'editSalaryMax'].forEach(id => document.getElementById(id).addEventListener('input', () => clearSalaryErrors('edit')));
         
         document.getElementById('editAddress').addEventListener('input', e => {
             if (editGeocodeTimeout) clearTimeout(editGeocodeTimeout);
             const a = e.target.value.trim();
-            if (!a) {
-                document.getElementById('editGeocodeResult').innerHTML = '';
-                document.getElementById('editGeocodeMap').style.display = 'none';
-                editFoundLat = editFoundLng = null;
-                return;
-            }
+            if (!a) { hideGeocodeResult('editGeocodeResult'); document.getElementById('editGeocodeMap').style.display='none'; editFoundLat=editFoundLng=null; return; }
             editGeocodeTimeout = setTimeout(() => {
                 ymaps.geocode(addSalsk(a), {results:1}).then(r => {
                     const g = r.geoObjects.get(0);
-                    if (!g) { document.getElementById('editGeocodeResult').innerHTML='<span class="text-danger">Не найдено</span>'; return; }
-                    const c = g.geometry.getCoordinates();
-                    editFoundLat=c[0]; editFoundLng=c[1];
-                    document.getElementById('editGeocodeResult').innerHTML='<span class="text-success">Найдено: '+g.getAddressLine()+'</span>';
+                    if (!g) { showGeocodeResult('editGeocodeResult', false, 'Адрес не найден: "' + a + '". Проверьте правильность написания.'); editFoundLat=editFoundLng=null; document.getElementById('editGeocodeMap').style.display='none'; return; }
+                    const addressLine = g.getAddressLine();
+                    if (!isInSalsk(addressLine)) { showGeocodeResult('editGeocodeResult', false, 'Адрес не найден в городе Сальск. Найден: "' + addressLine + '". Уточните запрос.'); editFoundLat=editFoundLng=null; document.getElementById('editGeocodeMap').style.display='none'; return; }
+                    editFoundLat=g.geometry.getCoordinates()[0]; editFoundLng=g.geometry.getCoordinates()[1];
+                    showGeocodeResult('editGeocodeResult', true, 'Найдено: ' + addressLine);
                     document.getElementById('editGeocodeMap').style.display='block';
                     if (editTempMap) editTempMap.destroy();
                     ymaps.ready(() => {
@@ -1073,53 +1108,32 @@
                         editTempMap.geoObjects.add(editTempMarker);
                         updateMapTheme();
                     });
-                }).catch(() => document.getElementById('editGeocodeResult').innerHTML='<span class="text-danger">Ошибка</span>');
+                }).catch(() => showGeocodeResult('editGeocodeResult', false, 'Ошибка при поиске адреса. Проверьте подключение к интернету.'));
             }, 800);
         });
         
-        document.getElementById('showLoginBtn').addEventListener('click', () => {
-            document.getElementById('modalLoginError').style.display='none';
-            loginModal.show();
-        });
-        
+        document.getElementById('showLoginBtn').addEventListener('click', () => { document.getElementById('modalLoginError').style.display='none'; loginModal.show(); });
         document.getElementById('modalSignInBtn').addEventListener('click', () => {
-            auth.signInWithEmailAndPassword(
-                document.getElementById('modalEmail').value,
-                document.getElementById('modalPassword').value
-            ).then(uc => {
-                loginModal.hide();
-                updateAuthUI(uc.user);
-                showNotification('Вход выполнен');
-            }).catch(e => {
-                document.getElementById('modalLoginError').style.display='block';
-                document.getElementById('modalLoginError').innerText = e.message;
-            });
+            auth.signInWithEmailAndPassword(document.getElementById('modalEmail').value, document.getElementById('modalPassword').value)
+                .then(uc => { loginModal.hide(); updateAuthUI(uc.user); showNotification('Вход выполнен'); })
+                .catch(e => { document.getElementById('modalLoginError').style.display='block'; document.getElementById('modalLoginError').innerText=e.message; });
         });
-        
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            auth.signOut().then(() => { updateAuthUI(null); showNotification('Вы вышли'); });
-        });
-        
+        document.getElementById('logoutBtn').addEventListener('click', () => { auth.signOut().then(() => { updateAuthUI(null); showNotification('Вы вышли'); }); });
         auth.onAuthStateChanged(u => updateAuthUI(u));
         
         document.getElementById('districtSelect').addEventListener('change', e => {
-            const d = e.target.value;
-            if (d && map) {
-                const coords = {
-                    'Заречный':[46.462,41.517], 'Низовский':[46.455,41.507], 'Кучур-да':[46.485,41.496],
-                    'Центральный':[46.4775,41.543], 'Капустино':[46.550,41.550], 'Промышленный':[46.545,41.545], 'Новосальск':[46.524,41.524]
-                };
-                map.setCenter(coords[d] || [46.475,41.541], 14);
+            if (e.target.value && map) {
+                const coords = {'Заречный':[46.462,41.517],'Низовский':[46.455,41.507],'Кучур-да':[46.485,41.496],'Центральный':[46.4775,41.543],'Капустино':[46.550,41.550],'Промышленный':[46.545,41.545],'Новосальск':[46.524,41.524]};
+                map.setCenter(coords[e.target.value]||[46.475,41.541], 14);
             }
             updateUI();
         });
 
-        const debounce = (fn, d=300) => { let t; return () => { clearTimeout(t); t=setTimeout(fn,d); }; };
-        document.getElementById('searchKeyword').addEventListener('input', debounce(updateUI));
-        document.getElementById('salaryFrom').addEventListener('input', debounce(updateUI));
-        document.getElementById('salaryTo').addEventListener('input', debounce(updateUI));
+        const d = (fn, t=300) => { let i; return () => { clearTimeout(i); i=setTimeout(fn,t); }; };
+        document.getElementById('searchKeyword').addEventListener('input', d(updateUI));
+        document.getElementById('salaryFrom').addEventListener('input', d(updateUI));
+        document.getElementById('salaryTo').addEventListener('input', d(updateUI));
         document.getElementById('jobType').addEventListener('change', updateUI);
-        
         window.addEventListener('resize', () => { if (map) map.invalidateSize(); });
     });
 </script>
